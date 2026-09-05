@@ -57,6 +57,19 @@
     for (var i = 0; i < list.length; i++) { if (String(list[i].id) === id) return list[i]; }
     return null;
   }
+  /* ---------- أيقونة افتراضية (بديل نظيف عن الإيموجي) عندما لا توجد صورة ولا رمز مخصّص للمنتج ---------- */
+  var DEFAULT_PRODUCT_ICON = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>';
+
+  /* ---------- أقسام المتجر: تدعم الاسم فقط (نص قديم) أو كائن {name, image} ---------- */
+  function categoryName(c) {
+    if (c == null) return '';
+    return typeof c === 'string' ? c : (c.name || '');
+  }
+  function categoryImage(c) {
+    if (c == null || typeof c === 'string') return null;
+    return c.image || null;
+  }
+
   function getCategories() { return LS.get(K.categories, []); }
   function getOffers() { return LS.get(K.offers, []); }
   function getContact() { return LS.get(K.contact, { phone: '', whatsapp: '', email: '', hours: '', address: '' }); }
@@ -271,6 +284,8 @@
     normalizeArabic: normalizeArabic, escapeHTML: escapeHTML, fileToCompressedDataURL: fileToCompressedDataURL,
     getProducts: getProducts, saveProducts: saveProducts, getProductById: getProductById,
     getCategories: getCategories, getOffers: getOffers, getContact: getContact,
+    categoryName: categoryName, categoryImage: categoryImage,
+    DEFAULT_PRODUCT_ICON: DEFAULT_PRODUCT_ICON,
     getProductCategories: getProductCategories, productCategoryLabel: productCategoryLabel, productsShareCategory: productsShareCategory,
     searchProducts: searchProducts,
     getUser: getUser, isLoggedIn: isLoggedIn, registerUser: registerUser, updateUser: updateUser, logoutUser: logoutUser,
