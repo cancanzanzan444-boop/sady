@@ -167,7 +167,23 @@
   .p-thumb{
     width:52px; height:52px; border-radius:12px; background:var(--surface-2);
     display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0;
+    overflow:hidden;
   }
+  .p-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+  .img-preview-row{display:flex; align-items:center; gap:12px; margin:-6px 0 14px;}
+  .img-preview{width:70px; height:70px; border-radius:12px; object-fit:cover; border:1px solid var(--line);}
+
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55);
+    align-items:center; justify-content:center; z-index:500; padding:16px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--surface); border-radius:18px; padding:20px; width:100%; max-width:460px;
+    max-height:88vh; overflow-y:auto;
+  }
+  .modal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .modal-head h3{font-size:1rem; font-weight:800;}
   .p-info{flex:1; min-width:0;}
   .p-info b{display:block; font-size:0.95rem; font-weight:800;}
   .p-info span{display:block; color:var(--text-dim); font-size:0.8rem; margin-top:2px;}
@@ -320,9 +336,17 @@
           </div>
           <div class="grid-2">
             <label class="field"><span>القسم</span><select id="pCategory"></select></label>
-            <label class="field"><span>أيقونة / رمز المنتج</span><input type="text" id="pIcon" placeholder="مثال: 🎧" maxlength="4"></label>
+            <label class="field"><span>أيقونة / رمز المنتج (احتياطي إن لم تُضف صورة)</span><input type="text" id="pIcon" placeholder="مثال: 🎧" maxlength="4"></label>
           </div>
           <label class="field"><span>الوصف</span><textarea id="pDesc" placeholder="اكتب وصف المنتج هنا..."></textarea></label>
+          <label class="field">
+            <span>صورة المنتج</span>
+            <input type="file" id="pImage" accept="image/*">
+          </label>
+          <div class="img-preview-row" id="pImagePreviewRow" style="display:none;">
+            <img id="pImagePreview" class="img-preview" alt="معاينة الصورة">
+            <button type="button" class="icon-sq del" id="pImageRemoveBtn" title="إزالة الصورة">🗑️</button>
+          </div>
           <div class="btn-row"><button type="submit" class="btn">إضافة المنتج</button></div>
         </form>
       </div>
@@ -331,6 +355,36 @@
         <div id="productList"></div>
       </div>
     </section>
+
+    <!-- EDIT PRODUCT MODAL -->
+    <div class="modal-overlay" id="editProductOverlay">
+      <div class="modal-box">
+        <div class="modal-head">
+          <h3>تعديل المنتج</h3>
+          <button type="button" class="icon-sq" id="editProductClose">✕</button>
+        </div>
+        <form id="editProductForm">
+          <div class="grid-2">
+            <label class="field"><span>اسم المنتج</span><input type="text" id="ePName" required></label>
+            <label class="field"><span>السعر (₪)</span><input type="number" id="ePPrice" min="0" step="0.5" required></label>
+          </div>
+          <div class="grid-2">
+            <label class="field"><span>القسم</span><select id="ePCategory"></select></label>
+            <label class="field"><span>أيقونة / رمز المنتج</span><input type="text" id="ePIcon" maxlength="4"></label>
+          </div>
+          <label class="field"><span>الوصف</span><textarea id="ePDesc"></textarea></label>
+          <label class="field">
+            <span>صورة المنتج</span>
+            <input type="file" id="ePImage" accept="image/*">
+          </label>
+          <div class="img-preview-row" id="ePImagePreviewRow" style="display:none;">
+            <img id="ePImagePreview" class="img-preview" alt="معاينة الصورة">
+            <button type="button" class="icon-sq del" id="ePImageRemoveBtn" title="إزالة الصورة">🗑️</button>
+          </div>
+          <div class="btn-row"><button type="submit" class="btn">حفظ التعديلات</button></div>
+        </form>
+      </div>
+    </div>
 
     <!-- ORDERS -->
     <section class="panel" id="panel-orders">
@@ -439,7 +493,7 @@
   // ---- storage helpers ----
   const LS = {
     get(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } },
-    set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+    set(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); return true; }catch(e){ return false; } }
   };
   const K = {
     products: 'speedShopProducts',
@@ -472,7 +526,7 @@
   let contact = ensure(K.contact, defaults.contact);
   let messages = ensure(K.messages, defaults.messages);
 
-  function save(key, data){ LS.set(key, data); }
+  function save(key, data){ return LS.set(key, data); }
 
   function toast(msg){
     const t = document.getElementById('toast');
@@ -525,9 +579,11 @@
   }
 
   // ---- PRODUCTS ----
-  function renderCategorySelect(){
-    const sel = document.getElementById('pCategory');
+  function fillCategorySelect(sel){
     sel.innerHTML = categories.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+  }
+  function renderCategorySelect(){
+    fillCategorySelect(document.getElementById('pCategory'));
   }
   function renderProducts(){
     const list = document.getElementById('productList');
@@ -537,7 +593,7 @@
     }
     list.innerHTML = products.map(p => `
       <div class="p-row" data-id="${p.id}">
-        <div class="p-thumb">${p.icon || '🛒'}</div>
+        <div class="p-thumb">${p.image ? `<img src="${p.image}" alt="">` : (p.icon || '🛒')}</div>
         <div class="p-info">
           <b>${escapeHTML(p.name)}</b>
           <span>${escapeHTML(p.category || '')}${p.desc ? ' • ' + escapeHTML(p.desc) : ''}</span>
@@ -550,6 +606,29 @@
       </div>
     `).join('');
   }
+  // ===== معاينة صورة المنتج الجديد =====
+  let pendingImage = null; // data URL للمنتج الجاري إضافته
+  const pImageInput = document.getElementById('pImage');
+  const pImagePreviewRow = document.getElementById('pImagePreviewRow');
+  const pImagePreview = document.getElementById('pImagePreview');
+  pImageInput.addEventListener('change', async () => {
+    const file = pImageInput.files[0];
+    if(!file) return;
+    try{
+      pendingImage = await SS.fileToCompressedDataURL(file, {maxSize: 800, quality: 0.75});
+      pImagePreview.src = pendingImage;
+      pImagePreviewRow.style.display = 'flex';
+    }catch(err){
+      toast('تعذّر تحميل الصورة، جرّب صورة أخرى');
+      pImageInput.value = '';
+    }
+  });
+  document.getElementById('pImageRemoveBtn').addEventListener('click', () => {
+    pendingImage = null;
+    pImageInput.value = '';
+    pImagePreviewRow.style.display = 'none';
+  });
+
   document.getElementById('productForm').addEventListener('submit', e => {
     e.preventDefault();
     const name = document.getElementById('pName').value.trim();
@@ -558,12 +637,89 @@
     const icon = document.getElementById('pIcon').value.trim();
     const desc = document.getElementById('pDesc').value.trim();
     if(!name || isNaN(price)) return;
-    products.push({ id: Date.now(), name, price, category, icon, desc });
-    save(K.products, products);
+    products.push({ id: Date.now(), name, price, category, icon, desc, image: pendingImage || null });
+    if(!save(K.products, products)){
+      products.pop();
+      toast('⚠️ لم تتّسع مساحة تخزين المتصفح — جرّب صورة أصغر أو احذف منتجًا قديمًا');
+      return;
+    }
     e.target.reset();
+    pendingImage = null;
+    pImagePreviewRow.style.display = 'none';
     renderProducts();
     toast('تمت إضافة المنتج');
   });
+
+  // ===== تعديل المنتج (نافذة كاملة تدعم تغيير الصورة) =====
+  let editingProductId = null;
+  let editPendingImage = undefined; // undefined = لم يتغيّر، null = أُزيلت، وإلا data URL جديد
+  const editOverlay = document.getElementById('editProductOverlay');
+  const ePImageInput = document.getElementById('ePImage');
+  const ePImagePreviewRow = document.getElementById('ePImagePreviewRow');
+  const ePImagePreview = document.getElementById('ePImagePreview');
+
+  function openEditModal(p){
+    editingProductId = p.id;
+    editPendingImage = undefined;
+    document.getElementById('ePName').value = p.name;
+    document.getElementById('ePPrice').value = p.price;
+    fillCategorySelect(document.getElementById('ePCategory'));
+    document.getElementById('ePCategory').value = p.category || '';
+    document.getElementById('ePIcon').value = p.icon || '';
+    document.getElementById('ePDesc').value = p.desc || '';
+    ePImageInput.value = '';
+    if(p.image){
+      ePImagePreview.src = p.image;
+      ePImagePreviewRow.style.display = 'flex';
+    } else {
+      ePImagePreviewRow.style.display = 'none';
+    }
+    editOverlay.classList.add('open');
+  }
+  function closeEditModal(){
+    editOverlay.classList.remove('open');
+    editingProductId = null;
+  }
+  document.getElementById('editProductClose').addEventListener('click', closeEditModal);
+  editOverlay.addEventListener('click', (e) => { if(e.target === editOverlay) closeEditModal(); });
+
+  ePImageInput.addEventListener('change', async () => {
+    const file = ePImageInput.files[0];
+    if(!file) return;
+    try{
+      editPendingImage = await SS.fileToCompressedDataURL(file, {maxSize: 800, quality: 0.75});
+      ePImagePreview.src = editPendingImage;
+      ePImagePreviewRow.style.display = 'flex';
+    }catch(err){
+      toast('تعذّر تحميل الصورة، جرّب صورة أخرى');
+      ePImageInput.value = '';
+    }
+  });
+  document.getElementById('ePImageRemoveBtn').addEventListener('click', () => {
+    editPendingImage = null;
+    ePImageInput.value = '';
+    ePImagePreviewRow.style.display = 'none';
+  });
+
+  document.getElementById('editProductForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const p = products.find(p => p.id === editingProductId);
+    if(!p) return;
+    p.name = document.getElementById('ePName').value.trim() || p.name;
+    p.price = parseFloat(document.getElementById('ePPrice').value) || p.price;
+    p.category = document.getElementById('ePCategory').value;
+    p.icon = document.getElementById('ePIcon').value.trim();
+    p.desc = document.getElementById('ePDesc').value.trim();
+    if(editPendingImage !== undefined) p.image = editPendingImage; // null = أُزيلت، أو data URL جديدة
+    if(!save(K.products, products)){
+      toast('⚠️ لم تتّسع مساحة تخزين المتصفح — جرّب صورة أصغر أو احذف منتجًا قديمًا');
+      return;
+    }
+    closeEditModal();
+    renderProducts();
+    toast('تم تحديث المنتج');
+  });
+
   document.getElementById('productList').addEventListener('click', e => {
     const btn = e.target.closest('button');
     if(!btn) return;
@@ -579,17 +735,7 @@
     } else if(btn.dataset.action === 'edit-product'){
       const p = products.find(p => p.id === id);
       if(!p) return;
-      const newName = prompt('اسم المنتج:', p.name);
-      if(newName === null) return;
-      const newPrice = prompt('السعر:', p.price);
-      if(newPrice === null) return;
-      const newDesc = prompt('الوصف:', p.desc || '');
-      p.name = newName.trim() || p.name;
-      p.price = parseFloat(newPrice) || p.price;
-      p.desc = newDesc;
-      save(K.products, products);
-      renderProducts();
-      toast('تم تحديث المنتج');
+      openEditModal(p);
     }
   });
 
