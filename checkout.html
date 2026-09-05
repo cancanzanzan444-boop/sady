@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script>window.addEventListener("pageshow", function(e){ if (e.persisted) { window.location.reload(); } });</script>
 <link rel="stylesheet" href="core.css?v=2">
 <script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -482,7 +483,7 @@
     <div>
       <!-- ADDRESS SECTION -->
       <div class="section">
-        <div class="section-head"><span class="em">📍</span><h3>عنوان التوصيل</h3></div>
+        <div class="section-head"><h3>عنوان التوصيل</h3></div>
 
         <div class="addr-card selected" data-addr="account" id="accountAddrCard">
           <div class="addr-radio"><div class="fill"></div></div>
@@ -530,10 +531,10 @@
 
       <!-- PAYMENT SECTION -->
       <div class="section">
-        <div class="section-head"><span class="em">💳</span><h3>طريقة الدفع</h3></div>
+        <div class="section-head"><h3>طريقة الدفع</h3></div>
 
         <div class="pay-option selected" data-pay="cod">
-          <span class="em">💵</span>
+          
           <div class="pay-body">
             <div class="pay-name">الدفع عند الاستلام</div>
             <div class="pay-desc">ادفع نقدًا للمندوب عند وصول الطلب</div>
@@ -541,7 +542,7 @@
           <div class="pay-radio"><div class="fill"></div></div>
         </div>
         <div class="pay-option" data-pay="card">
-          <span class="em">💳</span>
+          
           <div class="pay-body">
             <div class="pay-name">بطاقة ائتمان / مدى</div>
             <div class="pay-desc">دفع آمن عبر بوابة إلكترونية</div>
@@ -549,7 +550,7 @@
           <div class="pay-radio"><div class="fill"></div></div>
         </div>
         <div class="pay-option" data-pay="wallet">
-          <span class="em">📱</span>
+          
           <div class="pay-body">
             <div class="pay-name">محفظة إلكترونية</div>
             <div class="pay-desc">جوّال، ريبال، أو محفظة أخرى</div>
@@ -577,7 +578,7 @@
 
       <!-- NOTE -->
       <div class="section note-box">
-        <div class="section-head"><span class="em">📝</span><h3>ملاحظة للمندوب (اختياري)</h3></div>
+        <div class="section-head"><h3>ملاحظة للمندوب (اختياري)</h3></div>
         <textarea placeholder="مثال: الرجاء الاتصال قبل الوصول..."></textarea>
       </div>
     </div>
@@ -609,8 +610,8 @@
     <h3>تم استلام طلبك!</h3>
     <p>سيتواصل معك المندوب قريبًا لتأكيد التوصيل.</p>
     <div class="success-order-id">رقم الطلب: <b id="orderId">#SP-0000</b></div>
-    <a class="btn btn-primary" href="track-order.html" style="width:100%; margin-bottom:10px;">🚚 تتبع الطلب</a>
-    <a class="btn btn-ghost" href="index.html" style="width:100%;">🛍️ متابعة التسوق</a>
+    <a class="btn btn-primary" href="track-order.html" style="width:100%; margin-bottom:10px;">تتبع الطلب</a>
+    <a class="btn btn-ghost" href="index.html" style="width:100%;">متابعة التسوق</a>
   </div>
 </div>
 

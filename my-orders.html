@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script>window.addEventListener("pageshow", function(e){ if (e.persisted) { window.location.reload(); } });</script>
 <link rel="stylesheet" href="core.css?v=2">
 <script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -405,10 +406,10 @@
   <div class="wrap">
     <div id="ordersList" class="orders-grid"></div>
     <div class="empty-state" id="emptyState">
-      <span class="em">📦</span>
+      
       <h3 id="emptyTitle">لا توجد طلبات هنا</h3>
       <p id="emptyDesc">لم تجد أي طلبات مطابقة لهذا التصنيف أو البحث.</p>
-      <a class="btn btn-primary" href="index.html">🛍️ ابدأ التسوق</a>
+      <a class="btn btn-primary" href="index.html">ابدأ التسوق</a>
     </div>
   </div>
 </main>
@@ -456,7 +457,7 @@
 
   function actionButtons(o){
     if(o.status === 'ongoing'){
-      return `<a class="btn btn-primary" href="track-order.html?id=${encodeURIComponent(o.id)}">🚚 تتبع الطلب</a>`;
+      return `<a class="btn btn-primary" href="track-order.html?id=${encodeURIComponent(o.id)}">تتبع الطلب</a>`;
     }
     if(o.status === 'delivered'){
       return `<button class="btn btn-ghost" data-action="toggle">التفاصيل</button>`;
@@ -491,7 +492,7 @@
           </div>
           <div class="oc-details" data-details>
             <div class="od-row"><span>${SS.escapeHTML(o.itemsText)}</span></div>
-            <div class="od-addr">📍 <span>${SS.escapeHTML(o.addr)}</span></div>
+            <div class="od-addr"><span>${SS.escapeHTML(o.addr)}</span></div>
           </div>
         </div>
       `).join('');

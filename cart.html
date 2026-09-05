@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script>window.addEventListener("pageshow", function(e){ if (e.persisted) { window.location.reload(); } });</script>
 <link rel="stylesheet" href="core.css?v=2">
 <script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -464,7 +465,7 @@
       <!-- store groups injected by JS -->
 
       <div class="saved-toggle" id="savedToggle">
-        <span>📌 محفوظ لوقت لاحق (<span id="savedCount">0</span>)</span>
+        <span>محفوظ لوقت لاحق (<span id="savedCount">0</span>)</span>
         <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div class="saved-list" id="savedList"></div>
@@ -476,10 +477,10 @@
       <div class="promo-msg" id="promoMsg"></div>
 
       <div class="empty-state" id="emptyState">
-        <span class="em">🛒</span>
+        
         <h3>سلتك فارغة</h3>
         <p>لم تُضِف أي منتجات بعد. تصفّح المتجر واكتشف أفضل العروض.</p>
-        <a class="btn btn-primary" href="index.html">🛍️ ابدأ التسوق</a>
+        <a class="btn btn-primary" href="index.html">ابدأ التسوق</a>
       </div>
     </div>
 
@@ -511,14 +512,14 @@
     return SS.getCart().map(c => {
       const p = SS.getProductById(c.id);
       if(!p) return null;
-      return { id: p.id, store: SS.productCategoryLabel(p), em: p.icon || '🛍️', image: p.image || null, name: p.name, price: Number(p.price) || 0, qty: c.qty };
+      return { id: p.id, store: SS.productCategoryLabel(p), em: p.icon || SS.DEFAULT_PRODUCT_ICON, image: p.image || null, name: p.name, price: Number(p.price) || 0, qty: c.qty };
     }).filter(Boolean);
   }
   function savedItems(){
     return SS.getSaved().map(id => {
       const p = SS.getProductById(id);
       if(!p) return null;
-      return { id: p.id, store: SS.productCategoryLabel(p), em: p.icon || '🛍️', image: p.image || null, name: p.name, price: Number(p.price) || 0 };
+      return { id: p.id, store: SS.productCategoryLabel(p), em: p.icon || SS.DEFAULT_PRODUCT_ICON, image: p.image || null, name: p.name, price: Number(p.price) || 0 };
     }).filter(Boolean);
   }
 
@@ -562,7 +563,7 @@
         const group = document.createElement('div');
         group.className = 'store-group';
         group.innerHTML = `
-          <div class="store-head"><span class="em">🏪</span><h3>${store}</h3><span>${items.length} منتج</span></div>
+          <div class="store-head"><h3>${store}</h3><span>${items.length} منتج</span></div>
           ${items.map(it => `
             <div class="cart-item" data-id="${it.id}">
               <div class="ci-media">${it.image ? `<img src="${it.image}" alt="">` : it.em}</div>

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script>window.addEventListener("pageshow", function(e){ if (e.persisted) { window.location.reload(); } });</script>
 <link rel="stylesheet" href="core.css?v=2">
 <script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -452,7 +453,7 @@
       <!-- GALLERY -->
       <div class="gallery">
         <div class="gallery-track" id="galleryTrack">
-          <div class="gallery-slide" id="mainIconSlide">🛍️</div>
+          <div class="gallery-slide" id="mainIconSlide"></div>
         </div>
         <div class="gallery-dots" id="galleryDots"></div>
       </div>
@@ -460,7 +461,7 @@
 
     <div>
       <a class="store-link" href="index.html" id="storeLink">
-        <span class="em">🏪</span> <span id="categoryText">SPEED SHOP</span>
+        <span id="categoryText">SPEED SHOP</span>
         <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
       </a>
 
@@ -504,7 +505,7 @@
 <!-- BOTTOM BAR -->
 <div class="bottom-bar">
   <button class="btn btn-coral" id="buyNowBtn">اشترِ الآن</button>
-  <button class="btn btn-primary" id="addToCartBtn">🛒 أضف للسلة</button>
+  <button class="btn btn-primary" id="addToCartBtn">أضف للسلة</button>
 </div>
 
 <div class="toast" id="toast">✓ تمت إضافة المنتج للسلة</div>
@@ -521,16 +522,25 @@
 
   let qty = 1;
 
-  document.getElementById('mainIconSlide').innerHTML = product.image
-    ? `<img src="${product.image}" alt="${SS.escapeHTML(product.name)}" class="p-photo-full">`
-    : SS.escapeHTML(product.icon || '🛍️');
+  const productImages = (Array.isArray(product.images) && product.images.length)
+    ? product.images
+    : (product.image ? [product.image] : []);
+
+  const galleryTrack = document.getElementById('galleryTrack');
+  if(productImages.length){
+    galleryTrack.innerHTML = productImages.map(src =>
+      `<div class="gallery-slide"><img src="${src}" alt="${SS.escapeHTML(product.name)}" class="p-photo-full"></div>`
+    ).join('');
+  } else {
+    galleryTrack.innerHTML = `<div class="gallery-slide">${product.icon ? SS.escapeHTML(product.icon) : SS.DEFAULT_PRODUCT_ICON}</div>`;
+  }
   document.getElementById('categoryText').textContent = SS.productCategoryLabel(product);
   document.getElementById('productTitle').textContent = product.name;
   document.title = product.name + ' — SPEED SHOP';
   document.getElementById('priceDisplay').textContent = (Number(product.price) || 0) + '₪';
   document.getElementById('descText').textContent = product.desc && product.desc.trim() ? product.desc : 'لا يوجد وصف لهذا المنتج بعد.';
 
-  // gallery dots (شريحة واحدة فقط لأن المسؤول يضيف أيقونة واحدة للمنتج)
+  // gallery dots (نقاط تنقّل تظهر تلقائيًا عند وجود أكثر من صورة للمنتج)
   const slides = document.querySelectorAll('.gallery-slide');
   const dotsWrap = document.getElementById('galleryDots');
   if(slides.length > 1){
@@ -563,7 +573,7 @@
   favBtn.addEventListener('click', function(){
     const active = SS.toggleWishlist(product.id);
     this.classList.toggle('active', active);
-    showToast(active ? '♥ أُضيف إلى المفضلة' : 'أُزيل من المفضلة');
+    showToast(active ? 'أُضيف إلى المفضلة' : 'أُزيل من المفضلة');
   });
 
   // share
@@ -571,7 +581,7 @@
     if(navigator.share){
       navigator.share({title: document.title, url: window.location.href});
     } else {
-      showToast('🔗 تم نسخ رابط المنتج');
+      showToast('تم نسخ رابط المنتج');
     }
   });
 
@@ -605,7 +615,7 @@
     }
     wrap.innerHTML = list.map(p => `
       <a class="rp-card" href="product-detail.html?id=${encodeURIComponent(p.id)}">
-        <div class="rp-media">${p.image ? `<img src="${p.image}" alt="">` : (p.icon || '🛍️')}</div>
+        <div class="rp-media">${p.image ? `<img src="${p.image}" alt="">` : (p.icon || SS.DEFAULT_PRODUCT_ICON)}</div>
         <div class="rp-name">${SS.escapeHTML(p.name)}</div>
         <div class="rp-price">${Number(p.price) || 0}₪</div>
       </a>

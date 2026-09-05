@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script>window.addEventListener("pageshow", function(e){ if (e.persisted) { window.location.reload(); } });</script>
 <link rel="stylesheet" href="core.css?v=2">
 <script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -350,10 +351,10 @@
   <div class="wrap">
     <div class="fav-grid" id="favGrid"></div>
     <div class="empty-state" id="emptyState">
-      <span class="em">🤍</span>
+      
       <h3>مفضلتك فارغة</h3>
       <p>اضغط على أيقونة القلب في أي منتج عشان تحفظه هون وترجعله بسهولة.</p>
-      <a class="btn btn-primary" href="index.html">🛍️ تصفّح المنتجات</a>
+      <a class="btn btn-primary" href="index.html">تصفّح المنتجات</a>
     </div>
   </div>
 </main>
@@ -367,7 +368,7 @@
     return SS.getWishlist().map(id => {
       const p = SS.getProductById(id);
       if(!p) return null;
-      return { id: p.id, store: SS.productCategoryLabel(p), em: p.icon || '🛍️', image: p.image || null, name: p.name, price: Number(p.price) || 0, inStock: true };
+      return { id: p.id, store: SS.productCategoryLabel(p), em: p.icon || SS.DEFAULT_PRODUCT_ICON, image: p.image || null, name: p.name, price: Number(p.price) || 0, inStock: true };
     }).filter(Boolean);
   }
 
@@ -393,14 +394,14 @@
         <a href="product-detail.html?id=${encodeURIComponent(f.id)}">
           <div class="fav-media">${f.image ? `<img src="${f.image}" alt="">` : f.em}</div>
         </a>
-        <div class="fav-store">🏪 ${SS.escapeHTML(f.store)}</div>
+        <div class="fav-store">${SS.escapeHTML(f.store)}</div>
         <div class="fav-name">${SS.escapeHTML(f.name)}</div>
         <div class="fav-price-row">
           <span class="fav-price">${fmt(f.price)}</span>
         </div>
         <div class="fav-stock in">✓ متوفر</div>
         <button class="fav-add" data-action="add" data-id="${f.id}">
-          🛒 أضف للسلة
+          أضف للسلة
         </button>
       </div>
     `).join('');

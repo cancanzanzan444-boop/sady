@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script>window.addEventListener("pageshow", function(e){ if (e.persisted) { window.location.reload(); } });</script>
 <link rel="stylesheet" href="core.css?v=2">
 <script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -355,7 +356,7 @@
       <div class="section" style="margin-top:8px;">
         <div class="menu-card" style="padding:20px 16px;">
           <h2 style="font-size:1.05rem; font-weight:800; margin-bottom:4px;">
-            👋 أهلًا بك في SPEED SHOP
+            أهلًا بك في SPEED SHOP
           </h2>
           <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:18px;">
             سجّل بياناتك مرة واحدة فقط، وسنتعرف عليك تلقائيًا في كل زيارة قادمة من نفس هذا المتصفح.
@@ -415,16 +416,16 @@
       <div class="section-label">نشاطي</div>
       <div class="menu-card">
         <a class="menu-row" href="my-orders.html">
-          <span class="em">📦</span><span class="label">طلباتي</span>
+          <span class="label">طلباتي</span>
           <span class="badge" id="ordersBadge" style="display:none;"></span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </a>
         <a class="menu-row" href="wishlist.html">
-          <span class="em">🤍</span><span class="label">المفضلة</span>
+          <span class="label">المفضلة</span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </a>
         <a class="menu-row" href="cart.html">
-          <span class="em">🛒</span><span class="label">سلتي</span>
+          <span class="label">سلتي</span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </a>
       </div>
@@ -435,19 +436,19 @@
       <div class="section-label">إعدادات الحساب</div>
       <div class="menu-card">
         <div class="menu-row" id="addressRow">
-          <span class="em">📍</span><span class="label">العنوان المحفوظ</span>
+          <span class="label">العنوان المحفوظ</span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </div>
         <div class="menu-row">
-          <span class="em">💳</span><span class="label">طرق الدفع</span>
+          <span class="label">طرق الدفع</span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </div>
         <div class="menu-row" id="notifRow">
-          <span class="em">🔔</span><span class="label">إشعارات الطلبات</span>
+          <span class="label">إشعارات الطلبات</span>
           <div class="switch on" id="notifSwitch"></div>
         </div>
         <div class="menu-row" id="promoRow">
-          <span class="em">🎁</span><span class="label">إشعارات العروض</span>
+          <span class="label">إشعارات العروض</span>
           <div class="switch" id="promoSwitch"></div>
         </div>
       </div>
@@ -469,15 +470,15 @@
       <div class="section-label">الدعم</div>
       <div class="menu-card">
         <div class="menu-row">
-          <span class="em">💬</span><span class="label">تواصل مع الدعم</span>
+          <span class="label">تواصل مع الدعم</span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </div>
         <div class="menu-row">
-          <span class="em">❓</span><span class="label">الأسئلة الشائعة</span>
+          <span class="label">الأسئلة الشائعة</span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </div>
         <div class="menu-row">
-          <span class="em">📄</span><span class="label">الشروط والأحكام</span>
+          <span class="label">الشروط والأحكام</span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </div>
       </div>
@@ -487,7 +488,7 @@
     <div class="section">
       <div class="menu-card">
         <div class="menu-row danger" id="logoutBtn">
-          <span class="em">🚪</span><span class="label">تسجيل الخروج</span>
+          <span class="label">تسجيل الخروج</span>
         </div>
       </div>
     </div>
@@ -516,7 +517,7 @@
     document.getElementById('avatarInitial').textContent = (user.name || '؟').trim().charAt(0) || '؟';
     document.getElementById('profileName').textContent = user.name || '—';
     document.getElementById('profilePhone').textContent = user.phone || '—';
-    document.getElementById('profileAddress').textContent = '📍 ' + (user.city || 'غزة');
+    document.getElementById('profileAddress').textContent = (user.city || 'غزة');
 
     const myOrders = SS.getMyOrders();
     document.getElementById('statOrders').textContent = myOrders.length;

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script>window.addEventListener("pageshow", function(e){ if (e.persisted) { window.location.reload(); } });</script>
 <link rel="stylesheet" href="core.css?v=2">
 <script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -454,9 +455,9 @@
       <!-- MAP -->
       <div class="map-card" id="mapCard">
         <div class="map-grid"></div>
-        <div class="map-pin pin-store" title="المتجر">🏪</div>
-        <div class="map-pin pin-rider" id="riderPin" title="المندوب">🛵</div>
-        <div class="map-pin pin-home" title="عنوانك">📍</div>
+        <div class="map-pin pin-store" title="المتجر"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9M3 9v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9M3 9h18M9 21v-6h6v6"/></svg></div>
+        <div class="map-pin pin-rider" id="riderPin" title="المندوب"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="18.5" cy="17.5" r="2.5"/><path d="M5.5 17.5H10l2-6h4M12 11l2 3h3.5M10 17.5h6"/></svg></div>
+        <div class="map-pin pin-home" title="عنوانك"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg></div>
         <div class="map-eta">
           <span class="pulse"></span>
           <span>الوصول المتوقع خلال</span>
@@ -465,7 +466,6 @@
       </div>
 
       <div class="delivered-banner" id="deliveredBanner">
-        <div class="em">🎉</div>
         <h3>تم تسليم طلبك بنجاح</h3>
         <p>نتمنى أنك استمتعت بتجربة التسوق معنا</p>
       </div>
@@ -520,7 +520,7 @@
       <div class="section" id="riderSection" style="display:none;">
         <h3>مندوب التوصيل</h3>
         <div class="rider-card">
-          <div class="rider-avatar">🛵</div>
+          <div class="rider-avatar"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/></svg></div>
           <div class="rider-info">
             <div class="rider-name">محمود العطّار</div>
             <div class="rider-meta"><span class="star">★</span> 4.9 · 1,240 توصيلة</div>
@@ -540,11 +540,11 @@
       <div class="section">
         <h3>تحتاج مساعدة؟</h3>
         <div class="help-row">
-          <span class="em">💬</span><span>تواصل مع الدعم</span>
+          <span>تواصل مع الدعم</span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </div>
         <div class="help-row">
-          <span class="em">❓</span><span>مشكلة في الطلب</span>
+          <span>مشكلة في الطلب</span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </div>
       </div>
@@ -563,7 +563,7 @@
 <!-- BOTTOM BAR -->
 <div class="bottom-bar" id="bottomBar">
   <button class="btn btn-coral" id="cancelBtn">إلغاء الطلب</button>
-  <a class="btn btn-primary" href="tel:0591234567" style="flex:2;" id="mainActionBtn">📞 اتصال بالمندوب</a>
+  <a class="btn btn-primary" href="tel:0591234567" style="flex:2;" id="mainActionBtn">اتصال بالمندوب</a>
 </div>
 
 <script>
@@ -599,7 +599,7 @@
     {title:'تم التسليم', time:''}
   ];
   const statusLines = [
-    'تم استلام طلبك', 'تم تأكيد الطلب', 'جاري تحضير طلبك...', 'المندوب في الطريق إليك', 'تم تسليم طلبك 🎉'
+    'تم استلام طلبك', 'تم تأكيد الطلب', 'جاري تحضير طلبك...', 'المندوب في الطريق إليك', 'تم تسليم طلبك'
   ];
   let currentStep = 2; // starts at "preparing"
 
@@ -641,7 +641,7 @@
       document.getElementById('deliveredBanner').classList.add('show');
       document.getElementById('mapCard').style.display = 'none';
       document.getElementById('bottomBar').innerHTML =
-        `<a class="btn btn-primary" href="index.html" style="flex:1;">🛍️ متابعة التسوق</a>`;
+        `<a class="btn btn-primary" href="index.html" style="flex:1;">متابعة التسوق</a>`;
     }
   }
 

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script>window.addEventListener("pageshow", function(e){ if (e.persisted) { window.location.reload(); } });</script>
 <link rel="stylesheet" href="core.css?v=2">
 <script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -297,7 +298,8 @@
     transition:transform .2s ease, border-color .2s ease;
   }
   .cat-card:active{transform:translateY(2px) scale(0.98); border-color:var(--accent);}
-  .cat-card .em{width:83px; height:83px; object-fit:cover; border-radius:14px; display:block; margin:0 auto 8px;}
+  .cat-card .cat-img{width:83px; height:83px; object-fit:cover; border-radius:14px; display:block; margin:0 auto 8px;}
+  .cat-card .cat-img.placeholder{display:flex; align-items:center; justify-content:center; color:var(--text-dim); background:var(--surface-2);}
   .cat-card span{font-size:0.78rem; font-weight:600; color:var(--text-dim);}
 
   /* ===== OFFERS ===== */
@@ -823,18 +825,18 @@
   <button class="drawer-close" id="drawerClose">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
-  <a class="drawer-link" href="#home"><span class="em">🏠</span> الرئيسية</a>
-  <a class="drawer-link" href="#categories"><span class="em">🛍️</span> المنتجات</a>
-  <a class="drawer-link" href="#offers"><span class="em">🔥</span> العروض</a>
-  <a class="drawer-link" href="#"><span class="em">🏪</span> المتاجر</a>
-  <a class="drawer-link" href="wishlist.html"><span class="em">🤍</span> المفضلة</a>
-  <a class="drawer-link" href="my-orders.html"><span class="em">📦</span> طلباتي</a>
-  <a class="drawer-link" href="track-order.html"><span class="em">🚚</span> تتبع الطلب</a>
-  <a class="drawer-link" href="account.html"><span class="em">👤</span> حسابي</a>
-  <a class="drawer-link" href="#why"><span class="em">ℹ️</span> من نحن</a>
-  <a class="drawer-link" href="#faq"><span class="em">📞</span> تواصل معنا</a>
+  <a class="drawer-link" href="#home">الرئيسية</a>
+  <a class="drawer-link" href="#categories">المنتجات</a>
+  <a class="drawer-link" href="#offers">العروض</a>
+  <a class="drawer-link" href="#">المتاجر</a>
+  <a class="drawer-link" href="wishlist.html">المفضلة</a>
+  <a class="drawer-link" href="my-orders.html">طلباتي</a>
+  <a class="drawer-link" href="track-order.html">تتبع الطلب</a>
+  <a class="drawer-link" href="account.html">حسابي</a>
+  <a class="drawer-link" href="#why">من نحن</a>
+  <a class="drawer-link" href="#faq">تواصل معنا</a>
   <div class="drawer-sep"></div>
-  <button type="button" class="drawer-link admin-link" id="adminOpenBtn"><span class="em">🛠️</span> المسؤول</button>
+  <button type="button" class="drawer-link admin-link" id="adminOpenBtn">المسؤول</button>
 </aside>
 
 <!-- ADMIN LOGIN MODAL -->
@@ -843,7 +845,7 @@
   <button type="button" class="admin-modal-close" id="adminModalClose" aria-label="إغلاق">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
-  <div class="admin-modal-icon">🛠️</div>
+  <div class="admin-modal-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
   <h3 id="adminModalTitle">دخول المسؤول</h3>
   <p class="admin-modal-sub">هذه الخانة مخصصة للموجه العام لمنصة SPEED SHOP</p>
   <form id="adminLoginForm" novalidate>
@@ -870,9 +872,9 @@
     <h1>تسوّق براحتك<br><span>وخلي التوصيل علينا</span></h1>
     <p>اكتشف مجموعة واسعة من المنتجات بأسعار منافسة، واطلب ما تحتاجه بسهولة من خلال منصة SPEED SHOP.</p>
     <div class="hero-ctas">
-      <a class="btn btn-primary" href="#categories">🛒 ابدأ التسوق</a>
-      <a class="btn btn-ghost" href="track-order.html">🚚 تتبع طلبك</a>
-      <a class="btn btn-outline" href="#offers">🔥 العروض</a>
+      <a class="btn btn-primary" href="#categories">ابدأ التسوق</a>
+      <a class="btn btn-ghost" href="track-order.html">تتبع طلبك</a>
+      <a class="btn btn-outline" href="#offers">العروض</a>
     </div>
     <div class="hero-stats">
       <div class="stat-card"><b data-count="320" data-prefix="+">+0</b><span>متجر شريك</span></div>
@@ -884,16 +886,7 @@
   <!-- CATEGORIES -->
   <section class="section" id="categories">
     <div class="section-head"><h2>تسوّق حسب القسم</h2><a href="#">عرض الكل ←</a></div>
-    <div class="h-scroll">
-      <div class="cat-card reveal"><img class="em" src="sad102.jpg" alt="إلكترونيات"><span>إلكترونيات</span></div>
-      <div class="cat-card reveal"><img class="em" src="sad103.jpg" alt="ملابس وأزياء"><span>ملابس وأزياء</span></div>
-      <div class="cat-card reveal"><img class="em" src="sad104.jpg" alt="المنزل"><span>المنزل</span></div>
-      <div class="cat-card reveal"><img class="em" src="sad105.jpg" alt="مواد غذائية"><span>مواد غذائية</span></div>
-      <div class="cat-card reveal"><img class="em" src="sad106.jpg" alt="عناية شخصية"><span>عناية شخصية</span></div>
-      <div class="cat-card reveal"><img class="em" src="sad107.jpg" alt="منتجات الأطفال"><span>منتجات الأطفال</span></div>
-      <div class="cat-card reveal"><img class="em" src="sad108.jpg" alt="هدايا"><span>هدايا</span></div>
-      <div class="cat-card reveal"><img class="em" src="sad109.jpg" alt="أدوات"><span>أدوات</span></div>
-    </div>
+    <div class="h-scroll" id="categoriesScroll"></div>
   </section>
 
   <!-- OFFERS -->
@@ -903,7 +896,7 @@
 
   <!-- PRODUCTS -->
   <section class="section">
-    <div class="section-head"><h2>⭐ الأكثر طلبًا</h2><a href="#">عرض الكل ←</a></div>
+    <div class="section-head"><h2>الأكثر طلبًا</h2><a href="#">عرض الكل ←</a></div>
     <div class="product-grid" id="productGrid"></div>
   </section>
 
@@ -986,9 +979,9 @@
     </div>
   </div>
   <div class="foot-social">
-    <a href="#" aria-label="واتساب">💬</a>
-    <a href="#" aria-label="فيسبوك">📘</a>
-    <a href="#" aria-label="انستغرام">📷</a>
+    <a href="#" aria-label="واتساب"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.9 0-2.64-1.03-5.13-2.9-6.99A9.82 9.82 0 0 0 12.04 2zm0 1.67c2.2 0 4.27.86 5.82 2.42a8.2 8.2 0 0 1 2.42 5.82c0 4.55-3.7 8.24-8.25 8.24a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 0 1-1.26-4.38c0-4.55 3.7-8.24 8.25-8.24zm-3.05 4.44c-.15 0-.4.06-.61.29-.21.24-.8.78-.8 1.9 0 1.12.82 2.2.93 2.35.11.15 1.6 2.51 3.9 3.44 1.9.77 2.29.62 2.7.58.41-.04 1.32-.54 1.5-1.06.19-.52.19-.97.13-1.06-.06-.1-.21-.15-.44-.27-.23-.11-1.32-.65-1.53-.73-.2-.07-.35-.11-.5.11-.14.22-.57.72-.7.87-.13.15-.26.17-.48.06-.23-.11-.96-.35-1.82-1.12-.67-.6-1.13-1.33-1.26-1.55-.13-.22-.01-.34.1-.45.11-.11.23-.27.35-.4.11-.14.15-.23.23-.39.07-.15.04-.29-.02-.4-.06-.11-.5-1.24-.7-1.68-.18-.43-.37-.38-.5-.38z"/></svg></a>
+    <a href="#" aria-label="فيسبوك"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.5h2.5l.4-3H13.5V8.4c0-.87.24-1.46 1.5-1.46h1.6V4.35A21 21 0 0 0 14.3 4.2c-2.24 0-3.78 1.37-3.78 3.87v2.43H8v3h2.52V21h3z"/></svg></a>
+    <a href="#" aria-label="انستغرام"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg></a>
   </div>
   <div class="foot-bottom">© 2026 SPEED SHOP — جميع الحقوق محفوظة.</div>
 </footer>
@@ -1143,11 +1136,31 @@
     if(!offers.length){ band.closest('.section').style.display = 'none'; return; }
     band.innerHTML = offers.map(o => `
       <div class="offer-band reveal">
-        <h3>🔥 ${SS.escapeHTML(o.title)}</h3>
+        <h3>${SS.escapeHTML(o.title)}</h3>
         <p>خصم ${o.discount}%${o.until ? ' — ساري حتى ' + o.until : ''}</p>
       </div>
     `).join('');
     band.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  })();
+
+  // عرض أقسام المتجر الحقيقية التي أضافها المسؤول من لوحة التحكم
+  (function renderCategoryCards(){
+    const wrap = document.getElementById('categoriesScroll');
+    const cats = SS.getCategories();
+    if(!cats.length){
+      wrap.innerHTML = `<div class="empty-state"><p>لا توجد أقسام بعد — سيتم عرضها هنا فور إضافتها من لوحة المسؤول</p></div>`;
+      return;
+    }
+    const placeholderSVG = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>`;
+    wrap.innerHTML = cats.map(c => {
+      const name = SS.categoryName(c);
+      const img = SS.categoryImage(c);
+      const media = img
+        ? `<img class="cat-img" src="${img}" alt="${SS.escapeHTML(name)}">`
+        : `<span class="cat-img placeholder">${placeholderSVG}</span>`;
+      return `<a class="cat-card reveal" href="index.html?cat=${encodeURIComponent(name)}">${media}<span>${SS.escapeHTML(name)}</span></a>`;
+    }).join('');
+    wrap.querySelectorAll('.reveal').forEach(el => io.observe(el));
   })();
 
   // عرض المنتجات الحقيقية التي أضافها المسؤول من لوحة التحكم (لا توجد منتجات تجريبية)
@@ -1155,6 +1168,7 @@
   const sectionHead = grid.previousElementSibling;
   const params = new URLSearchParams(window.location.search);
   const q = params.get('q');
+  const catFilter = params.get('cat');
 
   function productCardHTML(p){
     const price = Number(p.price) || 0;
@@ -1164,7 +1178,7 @@
         <span class="p-fav${SS.isWishlisted(p.id) ? ' active' : ''}" data-action="fav" data-id="${p.id}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="${SS.isWishlisted(p.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
         </span>
-        <span class="ph">${p.image ? `<img src="${p.image}" alt="" class="p-photo">` : (p.icon || '🛍️')}</span>
+        <span class="ph">${p.image ? `<img src="${p.image}" alt="" class="p-photo">` : (p.icon || SS.DEFAULT_PRODUCT_ICON)}</span>
       </div>
       <div class="p-body">
         <div class="p-store">${SS.escapeHTML(SS.productCategoryLabel(p))}</div>
@@ -1184,7 +1198,7 @@
 
   function renderProducts(list, emptyMsg){
     if(!list.length){
-      grid.innerHTML = `<div class="empty-state"><span class="em">🛍️</span>${emptyMsg}</div>`;
+      grid.innerHTML = `<div class="empty-state">${emptyMsg}</div>`;
       return;
     }
     grid.innerHTML = list.map(productCardHTML).join('');
@@ -1195,6 +1209,11 @@
     if(sectionHead) sectionHead.querySelector('h2').textContent = `نتائج البحث عن: "${q}"`;
     if(sectionHead) { const a = sectionHead.querySelector('a'); if(a) a.style.display = 'none'; }
     renderProducts(SS.searchProducts(q), 'لا توجد نتائج مطابقة لبحثك');
+  } else if(catFilter){
+    if(sectionHead) sectionHead.querySelector('h2').textContent = `قسم: ${catFilter}`;
+    if(sectionHead) { const a = sectionHead.querySelector('a'); if(a){ a.textContent = 'عرض كل المنتجات'; a.href = 'index.html'; a.style.display = ''; } }
+    const filtered = SS.getProducts().filter(p => SS.getProductCategories(p).indexOf(catFilter) !== -1);
+    renderProducts(filtered, `لا توجد منتجات في قسم "${catFilter}" حاليًا`);
   } else {
     renderProducts(SS.getProducts(), 'لا توجد منتجات بعد — سيتم عرضها هنا فور إضافتها من لوحة المسؤول');
   }

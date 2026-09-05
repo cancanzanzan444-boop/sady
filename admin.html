@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script>window.addEventListener("pageshow", function(e){ if (e.persisted) { window.location.reload(); } });</script>
 <link rel="stylesheet" href="core.css?v=2">
 <script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -170,8 +171,18 @@
     overflow:hidden;
   }
   .p-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
-  .img-preview-row{display:flex; align-items:center; gap:12px; margin:-6px 0 14px;}
-  .img-preview{width:70px; height:70px; border-radius:12px; object-fit:cover; border:1px solid var(--line);}
+  .img-preview-row{display:flex; align-items:center; gap:10px; margin:-6px 0 14px; flex-wrap:wrap;}
+  .img-thumb{position:relative; width:70px; height:70px; flex-shrink:0;}
+  .img-thumb img{width:100%; height:100%; border-radius:12px; object-fit:cover; border:1px solid var(--line); display:block;}
+  .img-thumb .img-thumb-del{
+    position:absolute; top:-7px; right:-7px; width:22px; height:22px; border-radius:50%;
+    background:var(--danger); color:#fff; display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--bg); font-size:0.75rem; line-height:1;
+  }
+  .img-thumb-add{
+    width:70px; height:70px; border-radius:12px; border:1.5px dashed var(--line);
+    display:flex; align-items:center; justify-content:center; color:var(--text-dim); flex-shrink:0; cursor:pointer;
+  }
 
   .modal-overlay{
     display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55);
@@ -222,10 +233,15 @@
   /* categories */
   .cat-chip{
     display:inline-flex; align-items:center; gap:8px; background:var(--surface-2);
-    border:1px solid var(--line); border-radius:99px; padding:8px 14px; font-size:0.85rem;
+    border:1px solid var(--line); border-radius:99px; padding:6px 14px 6px 6px; font-size:0.85rem;
     font-weight:700; margin:0 6px 10px 0;
   }
   .cat-chip button{color:var(--danger); font-weight:900; font-size:0.9rem;}
+  .cat-chip-thumb{
+    width:26px; height:26px; border-radius:50%; object-fit:cover; background:var(--surface);
+    border:1px solid var(--line); cursor:pointer; flex-shrink:0;
+  }
+  .cat-chip-thumb.placeholder{display:flex; align-items:center; justify-content:center; color:var(--text-dim);}
 
   /* messages */
   .msg-log{max-height:280px; overflow-y:auto; margin-top:14px;}
@@ -296,7 +312,6 @@
 
 <!-- GATE: shown if not authenticated -->
 <div class="gate" id="gate">
-  <div class="em">🔒</div>
   <h1>هذه الصفحة مخصصة للمسؤول فقط</h1>
   <p>لازم تسجّل دخول من خانة "المسؤول" الموجودة داخل القائمة في الصفحة الرئيسية.</p>
   <a href="index.html">العودة للصفحة الرئيسية</a>
@@ -305,7 +320,7 @@
 <!-- SHELL: admin dashboard -->
 <div class="shell" id="shell">
   <div class="mobile-topbar">
-    <div class="mt-title"><span class="em">🛠️</span> لوحة المسؤول</div>
+    <div class="mt-title">لوحة المسؤول</div>
     <div style="display:flex; align-items:center; gap:8px;">
       <button class="theme-toggle" id="themeToggle" aria-label="الوضع الليلي/النهاري">
         <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -323,17 +338,17 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <div class="brand">
-      <span class="em">🛠️</span>
+      
       <div><b>لوحة المسؤول</b><span>SPEED SHOP</span></div>
     </div>
-    <button class="nav-item active" data-panel="dashboard"><span class="em">📊</span> نظرة عامة</button>
-    <button class="nav-item" data-panel="products"><span class="em">🛍️</span> المنتجات</button>
-    <button class="nav-item" data-panel="orders"><span class="em">📦</span> الطلبات</button>
-    <button class="nav-item" data-panel="categories"><span class="em">🗂️</span> الأقسام والمبيعات</button>
-    <button class="nav-item" data-panel="offers"><span class="em">🔥</span> العروض</button>
-    <button class="nav-item" data-panel="contact"><span class="em">📞</span> بيانات التواصل</button>
-    <button class="nav-item" data-panel="messages"><span class="em">💬</span> رسائل العملاء</button>
-    <button class="logout-btn" id="logoutBtn"><span class="em">↩️</span> تسجيل الخروج</button>
+    <button class="nav-item active" data-panel="dashboard">نظرة عامة</button>
+    <button class="nav-item" data-panel="products">المنتجات</button>
+    <button class="nav-item" data-panel="orders">الطلبات</button>
+    <button class="nav-item" data-panel="categories">الأقسام والمبيعات</button>
+    <button class="nav-item" data-panel="offers">العروض</button>
+    <button class="nav-item" data-panel="contact">بيانات التواصل</button>
+    <button class="nav-item" data-panel="messages">رسائل العملاء</button>
+    <button class="logout-btn" id="logoutBtn">تسجيل الخروج</button>
   </aside>
 
   <main class="content">
@@ -341,10 +356,10 @@
     <section class="panel active" id="panel-dashboard">
       <div class="topbar"><div><h2>نظرة عامة</h2><p>ملخص سريع عن حالة المنصة</p></div></div>
       <div class="stat-grid">
-        <div class="stat-card"><span class="em">🛍️</span><b id="statProducts">0</b><span>عدد المنتجات</span></div>
-        <div class="stat-card"><span class="em">📦</span><b id="statOrders">0</b><span>إجمالي الطلبات</span></div>
-        <div class="stat-card"><span class="em">🆕</span><b id="statNewOrders">0</b><span>طلبات جديدة</span></div>
-        <div class="stat-card"><span class="em">🔥</span><b id="statOffers">0</b><span>عروض فعّالة</span></div>
+        <div class="stat-card"><b id="statProducts">0</b><span>عدد المنتجات</span></div>
+        <div class="stat-card"><b id="statOrders">0</b><span>إجمالي الطلبات</span></div>
+        <div class="stat-card"><b id="statNewOrders">0</b><span>طلبات جديدة</span></div>
+        <div class="stat-card"><b id="statOffers">0</b><span>عروض فعّالة</span></div>
       </div>
       <div class="card">
         <h3>أحدث الطلبات</h3>
@@ -374,16 +389,13 @@
             </label>
             <button type="button" class="btn outline" id="pCategoryAddBtn">إضافة القسم</button>
           </div>
-          <label class="field"><span>أيقونة / رمز المنتج (احتياطي إن لم تُضف صورة)</span><input type="text" id="pIcon" placeholder="مثال: 🎧" maxlength="4"></label>
+          <label class="field"><span>أيقونة / رمز المنتج (احتياطي إن لم تُضف صورة)</span><input type="text" id="pIcon" placeholder="اختياري، رمز أو حرف قصير" maxlength="4"></label>
           <label class="field"><span>الوصف</span><textarea id="pDesc" placeholder="اكتب وصف المنتج هنا..."></textarea></label>
           <label class="field">
-            <span>صورة المنتج</span>
-            <input type="file" id="pImage" accept="image/*">
+            <span>صور المنتج (يمكنك إضافة أكثر من صورة)</span>
+            <input type="file" id="pImage" accept="image/*" multiple>
           </label>
-          <div class="img-preview-row" id="pImagePreviewRow" style="display:none;">
-            <img id="pImagePreview" class="img-preview" alt="معاينة الصورة">
-            <button type="button" class="icon-sq del" id="pImageRemoveBtn" title="إزالة الصورة">🗑️</button>
-          </div>
+          <div class="img-preview-row" id="pImagePreviewRow" style="display:none;"></div>
           <div class="btn-row"><button type="submit" class="btn">إضافة المنتج</button></div>
         </form>
       </div>
@@ -418,13 +430,10 @@
           <label class="field"><span>أيقونة / رمز المنتج</span><input type="text" id="ePIcon" maxlength="4"></label>
           <label class="field"><span>الوصف</span><textarea id="ePDesc"></textarea></label>
           <label class="field">
-            <span>صورة المنتج</span>
-            <input type="file" id="ePImage" accept="image/*">
+            <span>صور المنتج (يمكنك إضافة أكثر من صورة)</span>
+            <input type="file" id="ePImage" accept="image/*" multiple>
           </label>
-          <div class="img-preview-row" id="ePImagePreviewRow" style="display:none;">
-            <img id="ePImagePreview" class="img-preview" alt="معاينة الصورة">
-            <button type="button" class="icon-sq del" id="ePImageRemoveBtn" title="إزالة الصورة">🗑️</button>
-          </div>
+          <div class="img-preview-row" id="ePImagePreviewRow" style="display:none;"></div>
           <div class="btn-row"><button type="submit" class="btn">حفظ التعديلات</button></div>
         </form>
       </div>
@@ -443,17 +452,22 @@
       <div class="topbar"><div><h2>الأقسام والمبيعات</h2><p>تعديل أقسام المتجر ومتابعة أداء المبيعات</p></div></div>
       <div class="card">
         <h3>أقسام المتجر</h3>
+        <p style="color:var(--text-dim); font-size:0.82rem; margin-top:-6px;">أضف اسم القسم، ويمكنك اختياريًا رفع صورة تعبيرية له تظهر للزوار في الصفحة الرئيسية.</p>
         <div id="catChips"></div>
-        <form id="catForm" class="btn-row" style="margin-top:10px;">
-          <label class="field" style="flex:1; min-width:180px; margin-bottom:0;"><input type="text" id="catName" placeholder="اسم قسم جديد" required></label>
+        <form id="catForm" class="btn-row" style="margin-top:10px; align-items:flex-end;">
+          <label class="field" style="flex:1; min-width:160px; margin-bottom:0;"><input type="text" id="catName" placeholder="اسم قسم جديد" required></label>
+          <label class="field" style="min-width:170px; margin-bottom:0;">
+            <input type="file" id="catImageInput" accept="image/*" style="font-size:0.78rem;">
+          </label>
           <button type="submit" class="btn outline">إضافة قسم</button>
         </form>
+        <input type="file" id="catImageEditInput" accept="image/*" style="display:none;">
       </div>
       <div class="card">
         <h3>ملخص المبيعات</h3>
         <div class="stat-grid">
-          <div class="stat-card"><span class="em">💰</span><b id="salesTotal">0 ₪</b><span>إجمالي المبيعات المكتملة</span></div>
-          <div class="stat-card"><span class="em">✅</span><b id="salesDone">0</b><span>طلبات مكتملة</span></div>
+          <div class="stat-card"><b id="salesTotal">0 ₪</b><span>إجمالي المبيعات المكتملة</span></div>
+          <div class="stat-card"><b id="salesDone">0</b><span>طلبات مكتملة</span></div>
         </div>
       </div>
     </section>
@@ -619,7 +633,7 @@
     const recent = document.getElementById('recentOrders');
     const last = orders.slice(-5).reverse();
     recent.innerHTML = last.length ? last.map(orderRowHTML).join('') :
-      '<div class="empty-state"><span class="em">📭</span>لا توجد طلبات بعد</div>';
+      '<div class="empty-state">لا توجد طلبات بعد</div>';
   }
 
   // ---- PRODUCTS ----
@@ -634,7 +648,10 @@
       el.innerHTML = '<span style="color:var(--text-dim); font-size:0.82rem;">لا توجد أقسام بعد، أضف قسمًا من الحقل بالأسفل</span>';
       return;
     }
-    el.innerHTML = categories.map(c => `<button type="button" class="cat-pick${selectedSet.has(c) ? ' selected' : ''}" data-cat="${escapeHTML(c)}">${selectedSet.has(c) ? '✓ ' : ''}${escapeHTML(c)}</button>`).join('');
+    el.innerHTML = categories.map(c => {
+      const name = SS.categoryName(c);
+      return `<button type="button" class="cat-pick${selectedSet.has(name) ? ' selected' : ''}" data-cat="${escapeHTML(name)}">${selectedSet.has(name) ? '✓ ' : ''}${escapeHTML(name)}</button>`;
+    }).join('');
   }
   function renderAllCatPickers(){
     renderCatPicker('pCategoryPicker', pSelectedCats);
@@ -643,8 +660,8 @@
   function addCategoryFree(name){
     name = (name || '').trim();
     if(!name) return null;
-    if(!categories.includes(name)){
-      categories.push(name);
+    if(!categoryExists(name)){
+      categories.push({ name: name, image: null });
       save(K.categories, categories);
       renderCategories(); // يحدّث شرائح إدارة الأقسام + المنتقيَين
     }
@@ -683,51 +700,66 @@
   function renderProducts(){
     const list = document.getElementById('productList');
     if(!products.length){
-      list.innerHTML = '<div class="empty-state"><span class="em">🛍️</span>لا توجد منتجات بعد، أضف أول منتج من الأعلى</div>';
+      list.innerHTML = '<div class="empty-state">لا توجد منتجات بعد، أضف أول منتج من الأعلى</div>';
       return;
     }
     list.innerHTML = products.map(p => `
       <div class="p-row" data-id="${p.id}">
-        <div class="p-thumb">${p.image ? `<img src="${p.image}" alt="">` : (p.icon || '🛒')}</div>
+        <div class="p-thumb">${p.image ? `<img src="${p.image}" alt="">` : (p.icon || '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>')}</div>
         <div class="p-info">
           <b>${escapeHTML(p.name)}</b>
           <span>${escapeHTML((Array.isArray(p.categories) && p.categories.length ? p.categories.join('، ') : (p.category || '')))}${p.desc ? ' • ' + escapeHTML(p.desc) : ''}</span>
         </div>
         <div class="p-price">${p.price} ₪</div>
         <div class="p-actions">
-          <button class="icon-sq edit" data-action="edit-product" title="تعديل">✏️</button>
-          <button class="icon-sq del" data-action="delete-product" title="حذف">🗑️</button>
+          <button class="icon-sq edit" data-action="edit-product" title="تعديل"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></button>
+          <button class="icon-sq del" data-action="delete-product" title="حذف"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
         </div>
       </div>
     `).join('');
   }
-  // ===== معاينة صورة المنتج الجديد =====
-  let pendingImage = null; // data URL للمنتج الجاري إضافته
+  // ===== معاينة صور المنتج الجديد (يدعم أكثر من صورة) =====
+  function renderImageThumbs(containerId, imagesArr){
+    const row = document.getElementById(containerId);
+    if(!imagesArr.length){ row.style.display = 'none'; row.innerHTML = ''; return; }
+    row.style.display = 'flex';
+    row.innerHTML = imagesArr.map((src, i) => `
+      <div class="img-thumb" data-idx="${i}">
+        <img src="${src}" alt="">
+        <button type="button" class="img-thumb-del" title="إزالة">×</button>
+      </div>
+    `).join('');
+  }
+
+  let pendingImages = []; // data URLs للمنتج الجاري إضافته
   const pImageInput = document.getElementById('pImage');
   const pImagePreviewRow = document.getElementById('pImagePreviewRow');
-  const pImagePreview = document.getElementById('pImagePreview');
   pImageInput.addEventListener('change', async () => {
-    const file = pImageInput.files[0];
-    if(!file) return;
+    const files = Array.from(pImageInput.files || []);
+    if(!files.length) return;
     if(typeof SS === 'undefined' || !SS.fileToCompressedDataURL){
-      toast('⚠️ النسخة المحمّلة من الموقع قديمة — يرجى تحديث الصفحة (Ctrl+F5) والمحاولة مجددًا');
+      toast('النسخة المحمّلة من الموقع قديمة — يرجى تحديث الصفحة (Ctrl+F5) والمحاولة مجددًا');
       pImageInput.value = '';
       return;
     }
-    try{
-      pendingImage = await SS.fileToCompressedDataURL(file, {maxSize: 800, quality: 0.75});
-      pImagePreview.src = pendingImage;
-      pImagePreviewRow.style.display = 'flex';
-    }catch(err){
-      console.error('product image error:', err);
-      toast('⚠️ ' + (err && err.message ? err.message : 'تعذّر تحميل الصورة، جرّب صورة أخرى'));
-      pImageInput.value = '';
+    for(const file of files){
+      try{
+        const dataUrl = await SS.fileToCompressedDataURL(file, {maxSize: 800, quality: 0.75});
+        pendingImages.push(dataUrl);
+      }catch(err){
+        console.error('product image error:', err);
+        toast('' + (err && err.message ? err.message : 'تعذّر تحميل صورة، جرّب صورة أخرى'));
+      }
     }
-  });
-  document.getElementById('pImageRemoveBtn').addEventListener('click', () => {
-    pendingImage = null;
     pImageInput.value = '';
-    pImagePreviewRow.style.display = 'none';
+    renderImageThumbs('pImagePreviewRow', pendingImages);
+  });
+  pImagePreviewRow.addEventListener('click', e => {
+    const btn = e.target.closest('.img-thumb-del');
+    if(!btn) return;
+    const idx = Number(btn.closest('.img-thumb').dataset.idx);
+    pendingImages.splice(idx, 1);
+    renderImageThumbs('pImagePreviewRow', pendingImages);
   });
 
   document.getElementById('productForm').addEventListener('submit', e => {
@@ -738,32 +770,37 @@
     const icon = document.getElementById('pIcon').value.trim();
     const desc = document.getElementById('pDesc').value.trim();
     if(!name || isNaN(price)) return;
-    products.push({ id: Date.now(), name, price, category: categoriesForProduct[0] || '', categories: categoriesForProduct, icon, desc, image: pendingImage || null });
+    const images = pendingImages.slice();
+    products.push({ id: Date.now(), name, price, category: categoriesForProduct[0] || '', categories: categoriesForProduct, icon, desc, images: images, image: images[0] || null });
     if(!save(K.products, products)){
       products.pop();
-      toast('⚠️ لم تتّسع مساحة تخزين المتصفح — جرّب صورة أصغر أو احذف منتجًا قديمًا');
+      toast('لم تتّسع مساحة تخزين المتصفح — جرّب صورًا أقل أو أصغر، أو احذف منتجًا قديمًا');
       return;
     }
     e.target.reset();
     pSelectedCats.clear();
     renderCatPicker('pCategoryPicker', pSelectedCats);
-    pendingImage = null;
-    pImagePreviewRow.style.display = 'none';
+    pendingImages = [];
+    renderImageThumbs('pImagePreviewRow', pendingImages);
     renderProducts();
     toast('تمت إضافة المنتج');
   });
 
-  // ===== تعديل المنتج (نافذة كاملة تدعم تغيير الصورة) =====
+  // ===== تعديل المنتج (نافذة كاملة تدعم صورًا متعددة) =====
   let editingProductId = null;
-  let editPendingImage = undefined; // undefined = لم يتغيّر، null = أُزيلت، وإلا data URL جديد
+  let ePendingImages = []; // الصور الحالية للمنتج الجاري تعديله (تُحفظ كما هي عند الحفظ)
   const editOverlay = document.getElementById('editProductOverlay');
   const ePImageInput = document.getElementById('ePImage');
   const ePImagePreviewRow = document.getElementById('ePImagePreviewRow');
-  const ePImagePreview = document.getElementById('ePImagePreview');
+
+  function getProductImages(p){
+    if(Array.isArray(p.images) && p.images.length) return p.images.slice();
+    if(p.image) return [p.image];
+    return [];
+  }
 
   function openEditModal(p){
     editingProductId = p.id;
-    editPendingImage = undefined;
     document.getElementById('ePName').value = p.name;
     document.getElementById('ePPrice').value = p.price;
     ePSelectedCats = new Set(Array.isArray(p.categories) && p.categories.length ? p.categories : (p.category ? [p.category] : []));
@@ -771,12 +808,8 @@
     document.getElementById('ePIcon').value = p.icon || '';
     document.getElementById('ePDesc').value = p.desc || '';
     ePImageInput.value = '';
-    if(p.image){
-      ePImagePreview.src = p.image;
-      ePImagePreviewRow.style.display = 'flex';
-    } else {
-      ePImagePreviewRow.style.display = 'none';
-    }
+    ePendingImages = getProductImages(p);
+    renderImageThumbs('ePImagePreviewRow', ePendingImages);
     editOverlay.classList.add('open');
   }
   function closeEditModal(){
@@ -787,27 +820,31 @@
   editOverlay.addEventListener('click', (e) => { if(e.target === editOverlay) closeEditModal(); });
 
   ePImageInput.addEventListener('change', async () => {
-    const file = ePImageInput.files[0];
-    if(!file) return;
+    const files = Array.from(ePImageInput.files || []);
+    if(!files.length) return;
     if(typeof SS === 'undefined' || !SS.fileToCompressedDataURL){
-      toast('⚠️ النسخة المحمّلة من الموقع قديمة — يرجى تحديث الصفحة (Ctrl+F5) والمحاولة مجددًا');
+      toast('النسخة المحمّلة من الموقع قديمة — يرجى تحديث الصفحة (Ctrl+F5) والمحاولة مجددًا');
       ePImageInput.value = '';
       return;
     }
-    try{
-      editPendingImage = await SS.fileToCompressedDataURL(file, {maxSize: 800, quality: 0.75});
-      ePImagePreview.src = editPendingImage;
-      ePImagePreviewRow.style.display = 'flex';
-    }catch(err){
-      console.error('product image error:', err);
-      toast('⚠️ ' + (err && err.message ? err.message : 'تعذّر تحميل الصورة، جرّب صورة أخرى'));
-      ePImageInput.value = '';
+    for(const file of files){
+      try{
+        const dataUrl = await SS.fileToCompressedDataURL(file, {maxSize: 800, quality: 0.75});
+        ePendingImages.push(dataUrl);
+      }catch(err){
+        console.error('product image error:', err);
+        toast('' + (err && err.message ? err.message : 'تعذّر تحميل صورة، جرّب صورة أخرى'));
+      }
     }
-  });
-  document.getElementById('ePImageRemoveBtn').addEventListener('click', () => {
-    editPendingImage = null;
     ePImageInput.value = '';
-    ePImagePreviewRow.style.display = 'none';
+    renderImageThumbs('ePImagePreviewRow', ePendingImages);
+  });
+  ePImagePreviewRow.addEventListener('click', e => {
+    const btn = e.target.closest('.img-thumb-del');
+    if(!btn) return;
+    const idx = Number(btn.closest('.img-thumb').dataset.idx);
+    ePendingImages.splice(idx, 1);
+    renderImageThumbs('ePImagePreviewRow', ePendingImages);
   });
 
   document.getElementById('editProductForm').addEventListener('submit', e => {
@@ -820,9 +857,10 @@
     p.category = p.categories[0] || '';
     p.icon = document.getElementById('ePIcon').value.trim();
     p.desc = document.getElementById('ePDesc').value.trim();
-    if(editPendingImage !== undefined) p.image = editPendingImage; // null = أُزيلت، أو data URL جديدة
+    p.images = ePendingImages.slice();
+    p.image = p.images[0] || null;
     if(!save(K.products, products)){
-      toast('⚠️ لم تتّسع مساحة تخزين المتصفح — جرّب صورة أصغر أو احذف منتجًا قديمًا');
+      toast('لم تتّسع مساحة تخزين المتصفح — جرّب صورًا أقل أو أصغر');
       return;
     }
     closeEditModal();
@@ -874,7 +912,7 @@
   function renderOrders(){
     const list = document.getElementById('ordersList');
     if(!orders.length){
-      list.innerHTML = '<div class="empty-state"><span class="em">📭</span>لا توجد طلبات بعد</div>';
+      list.innerHTML = '<div class="empty-state">لا توجد طلبات بعد</div>';
       return;
     }
     list.innerHTML = orders.slice().reverse().map(orderRowHTML).join('');
@@ -895,35 +933,86 @@
   });
 
   // ---- CATEGORIES / SALES ----
+  let catImagePending = null; // صورة القسم الجديد قيد الإضافة
+  let catEditIdx = null; // فهرس القسم الجاري تغيير صورته
+
+  function categoryExists(name){
+    return categories.some(c => SS.categoryName(c) === name);
+  }
+
   function renderCategories(){
     const wrap = document.getElementById('catChips');
-    wrap.innerHTML = categories.map((c,i) => `
-      <span class="cat-chip">${escapeHTML(c)} <button data-idx="${i}" title="حذف">×</button></span>
-    `).join('');
+    if(!categories.length){
+      wrap.innerHTML = '<span style="color:var(--text-dim); font-size:0.82rem;">لا توجد أقسام بعد، أضف أول قسم من الأسفل</span>';
+    } else {
+      wrap.innerHTML = categories.map((c,i) => {
+        const name = SS.categoryName(c);
+        const img = SS.categoryImage(c);
+        const thumb = img
+          ? `<img class="cat-chip-thumb" data-idx="${i}" src="${img}" alt="" title="اضغط لتغيير الصورة">`
+          : `<span class="cat-chip-thumb placeholder" data-idx="${i}" title="اضغط لإضافة صورة"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span>`;
+        return `<span class="cat-chip">${thumb}${escapeHTML(name)} <button data-idx="${i}" data-act="del" title="حذف">×</button></span>`;
+      }).join('');
+    }
     renderAllCatPickers();
   }
-  document.getElementById('catForm').addEventListener('submit', e => {
+  document.getElementById('catForm').addEventListener('submit', async e => {
     e.preventDefault();
     const input = document.getElementById('catName');
     const val = input.value.trim();
-    if(!val || categories.includes(val)) return;
-    categories.push(val);
+    if(!val || categoryExists(val)) return;
+    categories.push({ name: val, image: catImagePending || null });
     save(K.categories, categories);
     input.value = '';
+    catImagePending = null;
+    document.getElementById('catImageInput').value = '';
     renderCategories();
     toast('تمت إضافة القسم');
   });
+  document.getElementById('catImageInput').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    try{
+      catImagePending = await SS.fileToCompressedDataURL(file, {maxSize: 600, quality: 0.75});
+    }catch(err){
+      toast((err && err.message) || 'تعذّر تحميل الصورة');
+      e.target.value = '';
+    }
+  });
   document.getElementById('catChips').addEventListener('click', e => {
-    const btn = e.target.closest('button');
+    const thumb = e.target.closest('.cat-chip-thumb');
+    if(thumb){
+      catEditIdx = Number(thumb.dataset.idx);
+      document.getElementById('catImageEditInput').click();
+      return;
+    }
+    const btn = e.target.closest('button[data-act="del"]');
     if(!btn) return;
     const idx = Number(btn.dataset.idx);
-    const removed = categories[idx];
+    const removed = SS.categoryName(categories[idx]);
     categories.splice(idx, 1);
     save(K.categories, categories);
     pSelectedCats.delete(removed);
     ePSelectedCats.delete(removed);
     renderCategories();
     toast('تم حذف القسم');
+  });
+  document.getElementById('catImageEditInput').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if(!file || catEditIdx === null) return;
+    try{
+      const dataUrl = await SS.fileToCompressedDataURL(file, {maxSize: 600, quality: 0.75});
+      const idx = catEditIdx;
+      const name = SS.categoryName(categories[idx]);
+      categories[idx] = { name: name, image: dataUrl };
+      save(K.categories, categories);
+      renderCategories();
+      toast('تم تحديث صورة القسم');
+    }catch(err){
+      toast((err && err.message) || 'تعذّر تحميل الصورة');
+    }
+    e.target.value = '';
+    catEditIdx = null;
   });
   function renderSales(){
     const doneOrders = orders.filter(o => o.status === 'done');
@@ -935,14 +1024,14 @@
   function renderOffers(){
     const list = document.getElementById('offersList');
     if(!offers.length){
-      list.innerHTML = '<div class="empty-state"><span class="em">🔥</span>لا توجد عروض حالية</div>';
+      list.innerHTML = '<div class="empty-state">لا توجد عروض حالية</div>';
       return;
     }
     list.innerHTML = offers.map(o => `
       <div class="p-row" data-id="${o.id}">
-        <div class="p-thumb">🔥</div>
+        <div class="p-thumb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 12 22 3.41 13.41a2 2 0 0 1 0-2.82L11.17 2.83a2 2 0 0 1 2.82 0l6.6 6.6a2 2 0 0 1 0 2.82z"/><circle cx="8.5" cy="8.5" r="1.5"/></svg></div>
         <div class="p-info"><b>${escapeHTML(o.title)}</b><span>خصم ${o.discount}%${o.until ? ' • ساري حتى ' + o.until : ''}</span></div>
-        <div class="p-actions"><button class="icon-sq del" data-action="delete-offer">🗑️</button></div>
+        <div class="p-actions"><button class="icon-sq del" data-action="delete-offer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>
       </div>
     `).join('');
   }
@@ -993,7 +1082,7 @@
   function renderMessages(){
     const log = document.getElementById('msgLog');
     if(!messages.length){
-      log.innerHTML = '<div class="empty-state"><span class="em">💬</span>لا توجد رسائل مرسلة بعد</div>';
+      log.innerHTML = '<div class="empty-state">لا توجد رسائل مرسلة بعد</div>';
       return;
     }
     log.innerHTML = messages.slice().reverse().map(m => `
