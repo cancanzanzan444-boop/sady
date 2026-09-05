@@ -332,7 +332,7 @@
 
 <header class="top">
   <div class="top-row">
-    <a class="icon-btn" href="speed-shop.html" aria-label="رجوع">
+    <a class="icon-btn" href="index.html" aria-label="رجوع">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="16 4 8 12 16 20"/></svg>
     </a>
     <div class="page-title">المفضلة<small id="countLabel">0 منتج</small></div>
@@ -353,7 +353,7 @@
       <span class="em">🤍</span>
       <h3>مفضلتك فارغة</h3>
       <p>اضغط على أيقونة القلب في أي منتج عشان تحفظه هون وترجعله بسهولة.</p>
-      <a class="btn btn-primary" href="speed-shop.html">🛍️ تصفّح المنتجات</a>
+      <a class="btn btn-primary" href="index.html">🛍️ تصفّح المنتجات</a>
     </div>
   </div>
 </main>
@@ -367,7 +367,7 @@
     return SS.getWishlist().map(id => {
       const p = SS.getProductById(id);
       if(!p) return null;
-      return { id: p.id, store: p.category || 'SPEED SHOP', em: p.icon || '🛍️', image: p.image || null, name: p.name, price: Number(p.price) || 0, inStock: true };
+      return { id: p.id, store: SS.productCategoryLabel(p), em: p.icon || '🛍️', image: p.image || null, name: p.name, price: Number(p.price) || 0, inStock: true };
     }).filter(Boolean);
   }
 

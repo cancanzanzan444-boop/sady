@@ -428,7 +428,7 @@
 
 <header class="top" id="pageHeader">
   <div class="top-row">
-    <a class="icon-btn" href="speed-shop.html" aria-label="رجوع">
+    <a class="icon-btn" href="index.html" aria-label="رجوع">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="16 4 8 12 16 20"/></svg>
     </a>
     <div class="top-spacer"></div>
@@ -459,7 +459,7 @@
     </div>
 
     <div>
-      <a class="store-link" href="speed-shop.html" id="storeLink">
+      <a class="store-link" href="index.html" id="storeLink">
         <span class="em">🏪</span> <span id="categoryText">SPEED SHOP</span>
         <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
       </a>
@@ -516,7 +516,7 @@
 
   if(!product){
     // لا يوجد منتج بهذا المعرف — نعود لصفحة المتجر
-    window.location.href = 'speed-shop.html';
+    window.location.href = 'index.html';
   }
 
   let qty = 1;
@@ -524,7 +524,7 @@
   document.getElementById('mainIconSlide').innerHTML = product.image
     ? `<img src="${product.image}" alt="${SS.escapeHTML(product.name)}" class="p-photo-full">`
     : SS.escapeHTML(product.icon || '🛍️');
-  document.getElementById('categoryText').textContent = product.category || 'SPEED SHOP';
+  document.getElementById('categoryText').textContent = SS.productCategoryLabel(product);
   document.getElementById('productTitle').textContent = product.name;
   document.title = product.name + ' — SPEED SHOP';
   document.getElementById('priceDisplay').textContent = (Number(product.price) || 0) + '₪';
@@ -595,7 +595,7 @@
   // منتجات مشابهة حقيقية (نفس القسم إن أمكن)، وإخفاء القسم إن لم يوجد غيره
   (function renderRelated(){
     const all = SS.getProducts().filter(p => String(p.id) !== String(product.id));
-    const sameCategory = all.filter(p => p.category === product.category);
+    const sameCategory = all.filter(p => p.id !== product.id && SS.productsShareCategory(p, product));
     const list = (sameCategory.length ? sameCategory : all).slice(0, 8);
     const wrap = document.getElementById('relatedScroll');
     if(!list.length){

@@ -61,6 +61,23 @@
   function getOffers() { return LS.get(K.offers, []); }
   function getContact() { return LS.get(K.contact, { phone: '', whatsapp: '', email: '', hours: '', address: '' }); }
 
+  /* ---------- أقسام المنتج (يدعم منتجًا واحدًا بأكثر من قسم، مع التوافق مع البيانات القديمة ذات القسم الواحد) ---------- */
+  function getProductCategories(p) {
+    if (!p) return [];
+    if (Array.isArray(p.categories) && p.categories.length) return p.categories;
+    if (p.category) return [p.category];
+    return [];
+  }
+  function productCategoryLabel(p) {
+    var cats = getProductCategories(p);
+    return cats.length ? cats.join('، ') : 'SPEED SHOP';
+  }
+  function productsShareCategory(a, b) {
+    var ca = getProductCategories(a), cb = getProductCategories(b);
+    for (var i = 0; i < ca.length; i++) { if (cb.indexOf(ca[i]) !== -1) return true; }
+    return false;
+  }
+
   /* ---------- البحث: يبحث داخل المنتجات التي أضافها المسؤول فعليًا، بأقرب تطابق للكلمة ---------- */
   function searchProducts(query) {
     var q = normalizeArabic(query);
@@ -254,6 +271,7 @@
     normalizeArabic: normalizeArabic, escapeHTML: escapeHTML, fileToCompressedDataURL: fileToCompressedDataURL,
     getProducts: getProducts, saveProducts: saveProducts, getProductById: getProductById,
     getCategories: getCategories, getOffers: getOffers, getContact: getContact,
+    getProductCategories: getProductCategories, productCategoryLabel: productCategoryLabel, productsShareCategory: productsShareCategory,
     searchProducts: searchProducts,
     getUser: getUser, isLoggedIn: isLoggedIn, registerUser: registerUser, updateUser: updateUser, logoutUser: logoutUser,
     getCart: getCart, setCart: setCart, addToCart: addToCart, removeFromCart: removeFromCart, cartCount: cartCount,

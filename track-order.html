@@ -434,7 +434,7 @@
 
 <header class="top">
   <div class="top-row">
-    <a class="icon-btn" href="speed-shop.html" aria-label="رجوع">
+    <a class="icon-btn" href="index.html" aria-label="رجوع">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="16 4 8 12 16 20"/></svg>
     </a>
     <div class="page-title">تتبع الطلب<small id="statusLine">جاري تحضير طلبك...</small></div>
@@ -641,7 +641,7 @@
       document.getElementById('deliveredBanner').classList.add('show');
       document.getElementById('mapCard').style.display = 'none';
       document.getElementById('bottomBar').innerHTML =
-        `<a class="btn btn-primary" href="speed-shop.html" style="flex:1;">🛍️ متابعة التسوق</a>`;
+        `<a class="btn btn-primary" href="index.html" style="flex:1;">🛍️ متابعة التسوق</a>`;
     }
   }
 
@@ -659,7 +659,7 @@
       }
       document.getElementById('statusLine').textContent = 'تم إلغاء الطلب';
       document.getElementById('bottomBar').innerHTML =
-        `<a class="btn btn-ghost" href="speed-shop.html" style="flex:1;">العودة للتسوق</a>`;
+        `<a class="btn btn-ghost" href="index.html" style="flex:1;">العودة للتسوق</a>`;
       document.getElementById('mapCard').style.display = 'none';
       clearInterval(progressTimer);
     }
