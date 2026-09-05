@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="core.css">
+<script src="core.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>لوحة تحكم المسؤول — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -449,13 +451,8 @@
   };
 
   const defaults = {
-    products: [
-      { id: 1, name:'سماعة لاسلكية', price:120, category:'إلكترونيات', icon:'🎧', desc:'سماعة بلوتوث بجودة صوت عالية.' },
-      { id: 2, name:'حذاء رياضي', price:180, category:'أزياء', icon:'👟', desc:'حذاء رياضي مريح لكل الأوقات.' }
-    ],
-    orders: [
-      { id: 1001, customer:'محمد أحمد', phone:'0599123456', items:'سماعة لاسلكية × 1', total:120, status:'new', date:new Date().toISOString() }
-    ],
+    products: [],
+    orders: [],
     categories: ['إلكترونيات','أزياء','منزل ومطبخ','مواد غذائية'],
     offers: [],
     contact: { phone:'', whatsapp:'', email:'', hours:'', address:'' },

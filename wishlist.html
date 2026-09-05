@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="core.css">
+<script src="core.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>المفضلة — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -358,46 +360,46 @@
 <div class="toast" id="toast">✓ تمت إضافة المنتج للسلة</div>
 
 <script>
-  let favorites = [
-    {id:1, store:'تك زون', em:'🎧', name:'سماعة لاسلكية عالية الجودة بإلغاء الضوضاء', price:145, old:190, inStock:true},
-    {id:2, store:'تك زون', em:'⌚', name:'ساعة ذكية بشاشة لمس ومراقبة اللياقة', price:340, old:420, inStock:true},
-    {id:3, store:'ستايل هب', em:'👟', name:'حذاء رياضي مريح للمشي اليومي', price:220, old:280, inStock:true},
-    {id:4, store:'بيوتي لاين', em:'🧴', name:'مجموعة عناية بالبشرة الطبيعية', price:130, old:null, inStock:false},
-    {id:5, store:'ترافل جو', em:'🎒', name:'حقيبة ظهر مقاومة للماء', price:95, old:null, inStock:true}
-  ];
-
   const fmt = n => `${n.toLocaleString('ar')}₪`;
 
+  function favorites(){
+    return SS.getWishlist().map(id => {
+      const p = SS.getProductById(id);
+      if(!p) return null;
+      return { id: p.id, store: p.category || 'SPEED SHOP', em: p.icon || '🛍️', name: p.name, price: Number(p.price) || 0, inStock: true };
+    }).filter(Boolean);
+  }
+
   function render(){
+    const favs = favorites();
     const grid = document.getElementById('favGrid');
     const emptyState = document.getElementById('emptyState');
-    document.getElementById('countLabel').textContent = `${favorites.length} منتج`;
-    document.getElementById('clearBtn').style.display = favorites.length ? 'block' : 'none';
+    document.getElementById('countLabel').textContent = `${favs.length} منتج`;
+    document.getElementById('clearBtn').style.display = favs.length ? 'block' : 'none';
 
-    if(favorites.length === 0){
+    if(favs.length === 0){
       grid.innerHTML = '';
       emptyState.classList.add('show');
       return;
     }
     emptyState.classList.remove('show');
 
-    grid.innerHTML = favorites.map(f => `
+    grid.innerHTML = favs.map(f => `
       <div class="fav-card" data-id="${f.id}">
         <button class="fav-remove" data-action="remove" data-id="${f.id}" aria-label="حذف من المفضلة">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/></svg>
         </button>
-        <a href="product-detail.html">
+        <a href="product-detail.html?id=${encodeURIComponent(f.id)}">
           <div class="fav-media">${f.em}</div>
         </a>
-        <div class="fav-store">🏪 ${f.store}</div>
-        <div class="fav-name">${f.name}</div>
+        <div class="fav-store">🏪 ${SS.escapeHTML(f.store)}</div>
+        <div class="fav-name">${SS.escapeHTML(f.name)}</div>
         <div class="fav-price-row">
           <span class="fav-price">${fmt(f.price)}</span>
-          ${f.old ? `<span class="fav-old">${fmt(f.old)}</span>` : ''}
         </div>
-        <div class="fav-stock ${f.inStock ? 'in' : 'out'}">${f.inStock ? '✓ متوفر' : '✕ نفد المخزون'}</div>
-        <button class="fav-add" data-action="add" data-id="${f.id}" ${f.inStock ? '' : 'disabled'}>
-          🛒 ${f.inStock ? 'أضف للسلة' : 'غير متوفر'}
+        <div class="fav-stock in">✓ متوفر</div>
+        <button class="fav-add" data-action="add" data-id="${f.id}">
+          🛒 أضف للسلة
         </button>
       </div>
     `).join('');
@@ -414,24 +416,25 @@
     const btn = e.target.closest('button[data-action]');
     if(!btn) return;
     e.preventDefault();
-    const id = Number(btn.dataset.id);
+    const id = btn.dataset.id;
     const action = btn.dataset.action;
     if(action === 'remove'){
       const card = btn.closest('.fav-card');
       card.classList.add('removing');
       setTimeout(() => {
-        favorites = favorites.filter(f => f.id !== id);
+        SS.toggleWishlist(id);
         render();
       }, 200);
     }
     if(action === 'add'){
+      SS.addToCart(id, 1);
       showToast('✓ تمت إضافة المنتج للسلة');
     }
   });
 
   document.getElementById('clearBtn').addEventListener('click', () => {
-    if(favorites.length === 0) return;
-    favorites = [];
+    if(SS.getWishlist().length === 0) return;
+    SS.setWishlist([]);
     render();
   });
 

@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="core.css">
+<script src="core.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SPEED SHOP — سرعتك في التسوق، سهولتك في التوصيل</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -799,7 +801,7 @@
       </a>
       <a class="icon-btn" href="cart.html" aria-label="السلة" id="headerCartBtn">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
-        <span class="badge" id="headerCartBadge">3</span>
+        <span class="badge" id="headerCartBadge" data-cart-badge>0</span>
       </a>
     </div>
   </div>
@@ -892,15 +894,7 @@
 
   <!-- OFFERS -->
   <section class="section" id="offers">
-    <div class="offer-band reveal">
-      <h3>🔥 عروض SPEED SHOP</h3>
-      <p>خصومات محدودة تنتهي قريبًا — لا تفوّتها</p>
-      <div class="countdown">
-        <div class="cd-box"><b id="cdH">02</b><span>ساعة</span></div>
-        <div class="cd-box"><b id="cdM">15</b><span>دقيقة</span></div>
-        <div class="cd-box"><b id="cdS">43</b><span>ثانية</span></div>
-      </div>
-    </div>
+    <div id="offersBand"></div>
   </section>
 
   <!-- PRODUCTS -->
@@ -1013,7 +1007,7 @@
   <a class="bn-item" href="cart.html" id="bnCartBtn">
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
     السلة
-    <span class="bn-badge" id="bnCartBadge">3</span>
+    <span class="bn-badge" id="bnCartBadge" data-cart-badge>0</span>
   </a>
   <a class="bn-item" href="my-orders.html">
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
@@ -1038,9 +1032,9 @@
   overlay.addEventListener('click', closeDrawer);
   document.querySelectorAll('.drawer-link').forEach(a => a.addEventListener('click', closeDrawer));
 
-  // Admin login modal
-  const ADMIN_USER = 'speed.test';
-  const ADMIN_PASS = 'speed1020$';
+  // Admin login modal — لا يوجد حساب تجريبي جاهز؛ أول مرة يفتح فيها المسؤول هذه الخانة
+  // يقوم بإنشاء اسم مستخدم وكلمة سر خاصّين به، ويتم حفظهما على هذا المتصفح فقط.
+  const ADMIN_CREDS_KEY = 'speedShopAdminCreds';
   const adminOpenBtn = document.getElementById('adminOpenBtn');
   const adminModal = document.getElementById('adminModal');
   const adminModalOverlay = document.getElementById('adminModalOverlay');
@@ -1049,9 +1043,23 @@
   const adminUserInput = document.getElementById('adminUser');
   const adminPassInput = document.getElementById('adminPass');
   const adminError = document.getElementById('adminError');
+  const adminModalTitle = document.getElementById('adminModalTitle');
+  const adminModalSub = document.querySelector('.admin-modal-sub');
+
+  function getAdminCreds(){
+    try{ const v = localStorage.getItem(ADMIN_CREDS_KEY); return v ? JSON.parse(v) : null; }catch(e){ return null; }
+  }
+  function isFirstRun(){ return !getAdminCreds(); }
 
   function openAdminModal(){
     closeDrawer();
+    if(isFirstRun()){
+      adminModalTitle.textContent = 'إنشاء حساب المسؤول';
+      adminModalSub.textContent = 'أول استخدام: اختر اسم مستخدم وكلمة سر خاصّة بك لإدارة المنصة.';
+    } else {
+      adminModalTitle.textContent = 'دخول المسؤول';
+      adminModalSub.textContent = 'هذه الخانة مخصصة للمسؤول العام لمنصة SPEED SHOP';
+    }
     adminModal.classList.add('open');
     adminModalOverlay.classList.add('open');
     setTimeout(() => adminUserInput.focus(), 200);
@@ -1070,10 +1078,27 @@
     e.preventDefault();
     const u = adminUserInput.value.trim();
     const p = adminPassInput.value;
-    if(u === ADMIN_USER && p === ADMIN_PASS){
+    if(!u || !p){ adminError.textContent = 'يرجى تعبئة الحقلين.'; adminError.classList.add('show'); return; }
+
+    const creds = getAdminCreds();
+    if(!creds){
+      // أول مرة: ننشئ الحساب ونحفظه
+      if(p.length < 6){
+        adminError.textContent = 'كلمة السر يجب أن تكون 6 أحرف على الأقل.';
+        adminError.classList.add('show');
+        return;
+      }
+      localStorage.setItem(ADMIN_CREDS_KEY, JSON.stringify({ user: u, pass: p }));
+      sessionStorage.setItem('speedShopAdminAuth', '1');
+      window.location.href = 'admin.html';
+      return;
+    }
+
+    if(u === creds.user && p === creds.pass){
       sessionStorage.setItem('speedShopAdminAuth', '1');
       window.location.href = 'admin.html';
     } else {
+      adminError.textContent = 'اسم المستخدم أو كلمة السر غير صحيحة.';
       adminError.classList.add('show');
       adminPassInput.value = '';
       adminPassInput.focus();
@@ -1090,16 +1115,11 @@
     });
   });
 
-  // Countdown
-  let total = 2*3600 + 15*60 + 43;
-  setInterval(() => {
-    if(total <= 0) return;
-    total--;
-    const h = Math.floor(total/3600), m = Math.floor((total%3600)/60), s = total%60;
-    document.getElementById('cdH').textContent = String(h).padStart(2,'0');
-    document.getElementById('cdM').textContent = String(m).padStart(2,'0');
-    document.getElementById('cdS').textContent = String(s).padStart(2,'0');
-  }, 1000);
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.15});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
   // Back to top
   const fab = document.getElementById('topFab');
@@ -1108,40 +1128,46 @@
   });
   fab.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
 
-  // Reveal on scroll
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, {threshold:0.15});
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  // عرض العروض الحقيقية التي أضافها المسؤول فقط (بدون أي عرض تجريبي)
+  (function renderOffers(){
+    const band = document.getElementById('offersBand');
+    if(!band) return;
+    const offers = (SS.getOffers() || []).filter(o => {
+      if(!o.until) return true;
+      return new Date(o.until + 'T23:59:59') >= new Date();
+    });
+    if(!offers.length){ band.closest('.section').style.display = 'none'; return; }
+    band.innerHTML = offers.map(o => `
+      <div class="offer-band reveal">
+        <h3>🔥 ${SS.escapeHTML(o.title)}</h3>
+        <p>خصم ${o.discount}%${o.until ? ' — ساري حتى ' + o.until : ''}</p>
+      </div>
+    `).join('');
+    band.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  })();
 
-  // Generate product cards
-  const products = [
-    {name:'سماعة لاسلكية عالية الجودة', store:'تك زون', price:'145₪', old:'190₪', disc:'-24%', rate:'4.7', ph:'🎧'},
-    {name:'حذاء رياضي مريح للمشي اليومي', store:'ستايل هب', price:'220₪', old:'280₪', disc:'-21%', rate:'4.5', ph:'👟'},
-    {name:'خلاط كهربائي متعدد السرعات', store:'هوم بلس', price:'175₪', old:null, disc:null, rate:'4.8', ph:'🧃'},
-    {name:'حقيبة ظهر مقاومة للماء', store:'ترافل جو', price:'95₪', old:'130₪', disc:'-27%', rate:'4.6', ph:'🎒'},
-    {name:'مجموعة عناية بالبشرة طبيعية', store:'بيوتي لاين', price:'130₪', old:null, disc:null, rate:'4.4', ph:'🧴'},
-    {name:'لعبة تركيب تعليمية للأطفال', store:'كيدز وورلد', price:'60₪', old:'85₪', disc:'-29%', rate:'4.9', ph:'🧩'},
-    {name:'ساعة ذكية بشاشة لمس', store:'تك زون', price:'340₪', old:'420₪', disc:'-19%', rate:'4.6', ph:'⌚'},
-    {name:'طقم أواني طهي غير لاصق', store:'هوم بلس', price:'260₪', old:null, disc:null, rate:'4.7', ph:'🍳'}
-  ];
+  // عرض المنتجات الحقيقية التي أضافها المسؤول من لوحة التحكم (لا توجد منتجات تجريبية)
   const grid = document.getElementById('productGrid');
-  grid.innerHTML = products.map(p => `
-    <a class="p-card reveal" href="product-detail.html">
+  const sectionHead = grid.previousElementSibling;
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q');
+
+  function productCardHTML(p){
+    const price = Number(p.price) || 0;
+    return `
+    <a class="p-card reveal" href="product-detail.html?id=${encodeURIComponent(p.id)}">
       <div class="p-media">
-        ${p.disc ? `<span class="p-discount">${p.disc}</span>` : ''}
-        <span class="p-fav" data-action="fav">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span class="p-fav${SS.isWishlisted(p.id) ? ' active' : ''}" data-action="fav" data-id="${p.id}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="${SS.isWishlisted(p.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
         </span>
-        <span class="ph">${p.ph}</span>
+        <span class="ph">${p.icon || '🛍️'}</span>
       </div>
       <div class="p-body">
-        <div class="p-store">${p.store}</div>
-        <div class="p-name">${p.name}</div>
-        <div class="p-rating"><span class="st">★</span> ${p.rate} (${Math.floor(Math.random()*180+20)})</div>
+        <div class="p-store">${SS.escapeHTML(p.category || 'SPEED SHOP')}</div>
+        <div class="p-name">${SS.escapeHTML(p.name)}</div>
         <div class="p-price-row">
-          <div><span class="p-price">${p.price}</span>${p.old ? `<span class="p-old">${p.old}</span>` : ''}</div>
-          <div class="p-add" data-action="add">
+          <div><span class="p-price">${price}₪</span></div>
+          <div class="p-add" data-action="add" data-id="${p.id}">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             <span class="p-add-spin"></span>
             <span class="p-add-check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
@@ -1149,21 +1175,60 @@
         </div>
       </div>
     </a>
-  `).join('');
-  document.querySelectorAll('#productGrid .reveal').forEach(el => io.observe(el));
+  `;
+  }
 
-  // prevent card navigation when tapping the fav/add controls, since they're demo-only actions here
+  function renderProducts(list, emptyMsg){
+    if(!list.length){
+      grid.innerHTML = `<div class="empty-state"><span class="em">🛍️</span>${emptyMsg}</div>`;
+      return;
+    }
+    grid.innerHTML = list.map(productCardHTML).join('');
+    document.querySelectorAll('#productGrid .reveal').forEach(el => io.observe(el));
+  }
+
+  if(q){
+    if(sectionHead) sectionHead.querySelector('h2').textContent = `نتائج البحث عن: "${q}"`;
+    if(sectionHead) { const a = sectionHead.querySelector('a'); if(a) a.style.display = 'none'; }
+    renderProducts(SS.searchProducts(q), 'لا توجد نتائج مطابقة لبحثك');
+  } else {
+    renderProducts(SS.getProducts(), 'لا توجد منتجات بعد — سيتم عرضها هنا فور إضافتها من لوحة المسؤول');
+  }
+
   grid.addEventListener('click', (e) => {
     const control = e.target.closest('[data-action]');
     if(!control) return;
     e.preventDefault();
     e.stopPropagation();
+    const id = control.dataset.id;
     if(control.dataset.action === 'add' && control.classList.contains('p-add')){
+      SS.addToCart(id, 1);
       window.mAddToCart(control);
+    } else if(control.dataset.action === 'fav'){
+      const active = SS.toggleWishlist(id);
+      control.classList.toggle('active', active);
+      const svg = control.querySelector('svg');
+      if(svg) svg.setAttribute('fill', active ? 'currentColor' : 'none');
+      window.mShowToast(active ? 'أُضيف إلى المفضلة' : 'أُزيل من المفضلة');
     }
   });
+
+  // مربع البحث داخل صفحة المتجر نفسها (إن وجد)
+  const inPageSearch = document.querySelector('.search-box input');
+  if(inPageSearch){
+    if(q) inPageSearch.value = q;
+    const form = inPageSearch.closest('form') || inPageSearch.parentElement;
+    inPageSearch.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        const val = inPageSearch.value.trim();
+        window.location.href = val ? `speed-shop.html?q=${encodeURIComponent(val)}` : 'speed-shop.html';
+      }
+    });
+  }
 </script>
 <script>
+
 (function(){
   // Shared toast helper: creates (once) and shows a small pill notification
   // at the top of the screen, matching the rest of the motion system.
@@ -1184,14 +1249,12 @@
     toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2000);
   };
 
-  // Bumps both cart badges (header + bottom nav) and increments their count,
-  // plus a small bounce on the header cart icon.
+  // Bumps both cart badges (header + bottom nav) visually — the actual numbers
+  // are kept in sync with the real cart by SS.updateBadges().
   window.mBumpCart = function(){
     var badges = [document.getElementById('headerCartBadge'), document.getElementById('bnCartBadge')];
     badges.forEach(function(b){
       if(!b) return;
-      var n = parseInt(b.textContent, 10) || 0;
-      b.textContent = n + 1;
       b.classList.remove('bump');
       void b.offsetWidth;
       b.classList.add('bump');

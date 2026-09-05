@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="core.css">
+<script src="core.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>سماعة لاسلكية عالية الجودة — SPEED SHOP</title>
+<title>تفاصيل المنتج — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -448,65 +450,29 @@
       <!-- GALLERY -->
       <div class="gallery">
         <div class="gallery-track" id="galleryTrack">
-          <div class="gallery-slide">🎧</div>
-          <div class="gallery-slide">📦</div>
-          <div class="gallery-slide">🔌</div>
-          <div class="gallery-slide">🎵</div>
+          <div class="gallery-slide" id="mainIconSlide">🛍️</div>
         </div>
-        <span class="discount-tag">-24%</span>
         <div class="gallery-dots" id="galleryDots"></div>
       </div>
     </div>
 
     <div>
-      <a class="store-link" href="speed-shop.html">
-        <span class="em">🏪</span> تك زون
+      <a class="store-link" href="speed-shop.html" id="storeLink">
+        <span class="em">🏪</span> <span id="categoryText">SPEED SHOP</span>
         <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
       </a>
 
-      <h1 class="p-title">سماعة لاسلكية عالية الجودة بخاصية إلغاء الضوضاء</h1>
-
-      <div class="p-rating">
-        <span class="stars">★★★★★</span>
-        <b>4.7</b>
-        <span class="sep">·</span>
-        <span>312 تقييم</span>
-        <span class="sep">·</span>
-        <span>896 عملية بيع</span>
-      </div>
+      <h1 class="p-title" id="productTitle">جاري التحميل…</h1>
 
       <div class="p-price-row">
-        <span class="p-price" id="priceDisplay">145₪</span>
-        <span class="p-old">190₪</span>
-        <span class="p-save">وفّرت 45₪</span>
-      </div>
-
-      <!-- COLOR -->
-      <div class="section">
-        <h4>اللون <span class="val" id="colorVal">— أسود</span></h4>
-        <div class="swatches" id="colorSwatches">
-          <button class="swatch selected" style="background:#1a1a1a;" data-color="أسود" data-val="0"></button>
-          <button class="swatch" style="background:#c9cdd6;" data-color="فضي" data-val="0"></button>
-          <button class="swatch" style="background:#3D5CFF;" data-color="أزرق" data-val="15"></button>
-          <button class="swatch" style="background:#FF6A3D;" data-color="مرجاني" data-val="10"></button>
-        </div>
-      </div>
-
-      <!-- STORAGE/VARIANT -->
-      <div class="section">
-        <h4>النوع</h4>
-        <div class="chips" id="typeChips">
-          <button class="chip selected" data-type="قياسي" data-val="0">قياسي</button>
-          <button class="chip" data-type="Pro (إلغاء ضوضاء نشط)" data-val="60">Pro +60₪</button>
-          <button class="chip" disabled data-type="Max">Max (نفد المخزون)</button>
-        </div>
+        <span class="p-price" id="priceDisplay">0₪</span>
       </div>
 
       <!-- QUANTITY -->
       <div class="section qty-row">
         <div>
           <h4 style="margin-bottom:4px;">الكمية</h4>
-          <span class="stock-note">✓ متوفر — يشحن خلال 24 ساعة</span>
+          <span class="stock-note">✓ متوفر</span>
         </div>
         <div class="stepper">
           <button id="qtyMinus">−</button>
@@ -518,83 +484,19 @@
       <!-- TABS -->
       <div class="tabbar" id="tabbar">
         <button class="tabbtn active" data-tab="desc">الوصف</button>
-        <button class="tabbtn" data-tab="specs">المواصفات</button>
-        <button class="tabbtn" data-tab="reviews">التقييمات (312)</button>
       </div>
 
       <div class="tabpanel active" id="tab-desc">
-        سماعة لاسلكية بتصميم مريح للاستخدام الطويل، توفّر صوتًا نقيًا مع باص قوي، وتدعم إلغاء الضوضاء المحيطة لتجربة استماع غامرة. عمر بطارية يصل حتى 30 ساعة مع علبة الشحن، ومقاومة للماء والعرق (IPX5) مناسبة للرياضة والاستخدام اليومي.
-      </div>
-
-      <div class="tabpanel" id="tab-specs">
-        <div class="spec-row"><span>البطارية</span><b>حتى 30 ساعة (مع العلبة)</b></div>
-        <div class="spec-row"><span>الاتصال</span><b>بلوتوث 5.3</b></div>
-        <div class="spec-row"><span>مقاومة الماء</span><b>IPX5</b></div>
-        <div class="spec-row"><span>الوزن</span><b>4.8 غرام / سماعة</b></div>
-        <div class="spec-row"><span>الضمان</span><b>سنة واحدة</b></div>
-      </div>
-
-      <div class="tabpanel" id="tab-reviews">
-        <div class="rv-summary">
-          <div class="rv-score">
-            <b>4.7</b>
-            <div class="stars">★★★★★</div>
-            <span>312 تقييم</span>
-          </div>
-          <div class="rv-bars">
-            <div class="rv-bar-row"><span>5</span><div class="rv-bar-track"><div class="rv-bar-fill" style="width:78%;"></div></div><span>78%</span></div>
-            <div class="rv-bar-row"><span>4</span><div class="rv-bar-track"><div class="rv-bar-fill" style="width:14%;"></div></div><span>14%</span></div>
-            <div class="rv-bar-row"><span>3</span><div class="rv-bar-track"><div class="rv-bar-fill" style="width:5%;"></div></div><span>5%</span></div>
-            <div class="rv-bar-row"><span>2</span><div class="rv-bar-track"><div class="rv-bar-fill" style="width:2%;"></div></div><span>2%</span></div>
-            <div class="rv-bar-row"><span>1</span><div class="rv-bar-track"><div class="rv-bar-fill" style="width:1%;"></div></div><span>1%</span></div>
-          </div>
-        </div>
-
-        <div class="rv-item">
-          <div class="rv-head"><div class="rv-avatar">👤</div><span class="rv-name">أحمد.س</span><span class="rv-date">قبل 3 أيام</span></div>
-          <div class="rv-stars">★★★★★</div>
-          <div class="rv-text">جودة الصوت ممتازة وإلغاء الضوضاء شغال بشكل جيد جدًا، التوصيل كان سريع.</div>
-        </div>
-        <div class="rv-item">
-          <div class="rv-head"><div class="rv-avatar">👤</div><span class="rv-name">رنا م.</span><span class="rv-date">قبل أسبوع</span></div>
-          <div class="rv-stars">★★★★☆</div>
-          <div class="rv-text">مريحة جدًا للاستخدام الطويل، البطارية تدوم فعلاً طول اليوم. بس السعر كان يستاهل أرخص شوي.</div>
-        </div>
-        <div class="rv-item">
-          <div class="rv-head"><div class="rv-avatar">👤</div><span class="rv-name">محمد ك.</span><span class="rv-date">قبل أسبوعين</span></div>
-          <div class="rv-stars">★★★★★</div>
-          <div class="rv-text">أفضل سماعة اشتريتها بهذا السعر، التغليف كان محترف والمنتج مطابق للوصف تمامًا.</div>
-        </div>
+        <span id="descText">لا يوجد وصف لهذا المنتج بعد.</span>
       </div>
     </div>
   </div>
 
   <!-- RELATED -->
-  <div class="section" style="margin-top:26px;">
+  <div class="section" id="relatedSection" style="margin-top:26px;">
     <h4>منتجات مشابهة</h4>
   </div>
-  <div class="related-scroll">
-    <a class="rp-card" href="product-detail.html">
-      <div class="rp-media">⌚</div>
-      <div class="rp-name">ساعة ذكية بشاشة لمس</div>
-      <div class="rp-price">340₪</div>
-    </a>
-    <a class="rp-card" href="product-detail.html">
-      <div class="rp-media">🔊</div>
-      <div class="rp-name">مكبر صوت بلوتوث محمول</div>
-      <div class="rp-price">110₪</div>
-    </a>
-    <a class="rp-card" href="product-detail.html">
-      <div class="rp-media">🎙️</div>
-      <div class="rp-name">مايكروفون لاسلكي للجوال</div>
-      <div class="rp-price">75₪</div>
-    </a>
-    <a class="rp-card" href="product-detail.html">
-      <div class="rp-media">🔋</div>
-      <div class="rp-name">باور بانك سريع الشحن 20000mAh</div>
-      <div class="rp-price">95₪</div>
-    </a>
-  </div>
+  <div class="related-scroll" id="relatedScroll"></div>
 </main>
 
 <!-- BOTTOM BAR -->
@@ -606,18 +508,36 @@
 <div class="toast" id="toast">✓ تمت إضافة المنتج للسلة</div>
 
 <script>
-  const BASE_PRICE = 145;
-  const BASE_OLD = 190;
-  let colorExtra = 0, typeExtra = 0, qty = 1;
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get('id');
+  const product = productId ? SS.getProductById(productId) : null;
 
-  // gallery dots
+  if(!product){
+    // لا يوجد منتج بهذا المعرف — نعود لصفحة المتجر
+    window.location.href = 'speed-shop.html';
+  }
+
+  let qty = 1;
+
+  document.getElementById('mainIconSlide').textContent = product.icon || '🛍️';
+  document.getElementById('categoryText').textContent = product.category || 'SPEED SHOP';
+  document.getElementById('productTitle').textContent = product.name;
+  document.title = product.name + ' — SPEED SHOP';
+  document.getElementById('priceDisplay').textContent = (Number(product.price) || 0) + '₪';
+  document.getElementById('descText').textContent = product.desc && product.desc.trim() ? product.desc : 'لا يوجد وصف لهذا المنتج بعد.';
+
+  // gallery dots (شريحة واحدة فقط لأن المسؤول يضيف أيقونة واحدة للمنتج)
   const slides = document.querySelectorAll('.gallery-slide');
   const dotsWrap = document.getElementById('galleryDots');
-  slides.forEach((_, i) => {
-    const d = document.createElement('div');
-    d.className = 'gdot' + (i === 0 ? ' active' : '');
-    dotsWrap.appendChild(d);
-  });
+  if(slides.length > 1){
+    slides.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'gdot' + (i === 0 ? ' active' : '');
+      dotsWrap.appendChild(d);
+    });
+  } else {
+    dotsWrap.style.display = 'none';
+  }
   document.getElementById('galleryTrack').addEventListener('scroll', function(){
     const idx = Math.round(this.scrollLeft / this.clientWidth);
     document.querySelectorAll('.gdot').forEach((d,i) => d.classList.toggle('active', i === idx));
@@ -628,50 +548,18 @@
     document.getElementById('pageHeader').classList.toggle('scrolled', window.scrollY > 10);
   });
 
-  // color swatches
-  document.getElementById('colorSwatches').addEventListener('click', (e) => {
-    const sw = e.target.closest('.swatch');
-    if(!sw) return;
-    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
-    sw.classList.add('selected');
-    document.getElementById('colorVal').textContent = '— ' + sw.dataset.color;
-    colorExtra = Number(sw.dataset.val);
-    updatePrice();
-  });
-
-  // type chips
-  document.getElementById('typeChips').addEventListener('click', (e) => {
-    const chip = e.target.closest('.chip:not(:disabled)');
-    if(!chip) return;
-    document.querySelectorAll('#typeChips .chip').forEach(c => c.classList.remove('selected'));
-    chip.classList.add('selected');
-    typeExtra = Number(chip.dataset.val);
-    updatePrice();
-  });
-
   // quantity
   const qtyVal = document.getElementById('qtyVal');
   document.getElementById('qtyPlus').addEventListener('click', () => { qty++; qtyVal.textContent = qty; });
   document.getElementById('qtyMinus').addEventListener('click', () => { if(qty > 1){ qty--; qtyVal.textContent = qty; } });
 
-  function updatePrice(){
-    const price = BASE_PRICE + colorExtra + typeExtra;
-    document.getElementById('priceDisplay').textContent = price.toLocaleString('ar') + '₪';
-  }
-
-  // tabs
-  document.getElementById('tabbar').addEventListener('click', (e) => {
-    const btn = e.target.closest('.tabbtn');
-    if(!btn) return;
-    document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-  });
-
   // favorite
-  document.getElementById('favBtn').addEventListener('click', function(){
-    this.classList.toggle('active');
+  const favBtn = document.getElementById('favBtn');
+  favBtn.classList.toggle('active', SS.isWishlisted(product.id));
+  favBtn.addEventListener('click', function(){
+    const active = SS.toggleWishlist(product.id);
+    this.classList.toggle('active', active);
+    showToast(active ? '♥ أُضيف إلى المفضلة' : 'أُزيل من المفضلة');
   });
 
   // share
@@ -691,12 +579,34 @@
   }
 
   document.getElementById('addToCartBtn').addEventListener('click', () => {
+    SS.addToCart(product.id, qty);
     showToast('✓ تمت إضافة المنتج للسلة');
   });
 
   document.getElementById('buyNowBtn').addEventListener('click', () => {
+    SS.addToCart(product.id, qty);
     mGoTo('cart.html');
   });
+
+  // منتجات مشابهة حقيقية (نفس القسم إن أمكن)، وإخفاء القسم إن لم يوجد غيره
+  (function renderRelated(){
+    const all = SS.getProducts().filter(p => String(p.id) !== String(product.id));
+    const sameCategory = all.filter(p => p.category === product.category);
+    const list = (sameCategory.length ? sameCategory : all).slice(0, 8);
+    const wrap = document.getElementById('relatedScroll');
+    if(!list.length){
+      document.getElementById('relatedSection').style.display = 'none';
+      wrap.style.display = 'none';
+      return;
+    }
+    wrap.innerHTML = list.map(p => `
+      <a class="rp-card" href="product-detail.html?id=${encodeURIComponent(p.id)}">
+        <div class="rp-media">${p.icon || '🛍️'}</div>
+        <div class="rp-name">${SS.escapeHTML(p.name)}</div>
+        <div class="rp-price">${Number(p.price) || 0}₪</div>
+      </a>
+    `).join('');
+  })();
 </script>
 <script>
   (function(){

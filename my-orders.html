@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="core.css">
+<script src="core.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>طلباتي — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -412,48 +414,34 @@
 </main>
 
 <script>
-  const orders = [
-    {
-      id:'#SP-4821', date:'اليوم، 4:02 م', status:'ongoing', statusLabel:'قيد التوصيل',
-      stores:[{em:'🎧', name:'تك زون'}, {em:'👟', name:'ستايل هب'}],
-      items:[{em:'🎧', name:'سماعة لاسلكية عالية الجودة', qty:1, price:145},
-             {em:'⌚', name:'ساعة ذكية بشاشة لمس', qty:1, price:340},
-             {em:'👟', name:'حذاء رياضي مريح', qty:2, price:440}],
-      total:645, addr:'غزة، تل الهوى، شارع الوحدة، عمارة 12'
-    },
-    {
-      id:'#SP-4790', date:'أمس، 1:15 م', status:'delivered', statusLabel:'تم التسليم',
-      stores:[{em:'🍔', name:'مطعم الأصالة'}],
-      items:[{em:'🍔', name:'وجبة برجر دبل', qty:2, price:70},
-             {em:'🥤', name:'مشروب غازي', qty:2, price:16}],
-      total:101, addr:'غزة، الرمال، شارع عمر المختار'
-    },
-    {
-      id:'#SP-4711', date:'٢٤ أغسطس', status:'delivered', statusLabel:'تم التسليم',
-      stores:[{em:'🧴', name:'بيوتي لاين'}],
-      items:[{em:'🧴', name:'مجموعة عناية بالبشرة طبيعية', qty:1, price:130}],
-      total:145, addr:'غزة، تل الهوى، شارع الوحدة، عمارة 12'
-    },
-    {
-      id:'#SP-4652', date:'١٨ أغسطس', status:'cancelled', statusLabel:'ملغى',
-      stores:[{em:'🎒', name:'ترافل جو'}],
-      items:[{em:'🎒', name:'حقيبة ظهر مقاومة للماء', qty:1, price:95}],
-      total:110, addr:'غزة، تل الهوى، شارع الوحدة، عمارة 12'
-    },
-    {
-      id:'#SP-4590', date:'١٠ أغسطس', status:'delivered', statusLabel:'تم التسليم',
-      stores:[{em:'📱', name:'تك زون'}, {em:'🧴', name:'بيوتي لاين'}],
-      items:[{em:'📱', name:'سماعة أذن بلوتوث', qty:1, price:80},
-             {em:'🧴', name:'كريم مرطب', qty:1, price:45}],
-      total:140, addr:'غزة، الرمال، شارع عمر المختار'
-    },
-    {
-      id:'#SP-4501', date:'٣ أغسطس', status:'cancelled', statusLabel:'ملغى',
-      stores:[{em:'👟', name:'ستايل هب'}],
-      items:[{em:'👟', name:'حذاء كاجوال', qty:1, price:160}],
-      total:175, addr:'غزة، تل الهوى، شارع الوحدة، عمارة 12'
-    }
-  ];
+  // الطلبات الحقيقية الخاصة بصاحب هذا الحساب فقط (يُطابق رقم الجوال المسجّل)
+  const currentUser = SS.getUser();
+  if(!currentUser){
+    window.location.href = 'account.html';
+  }
+
+  const statusMap = {
+    new:  { bucket:'ongoing',   label:'قيد المعالجة' },
+    prep: { bucket:'ongoing',   label:'قيد التجهيز' },
+    done: { bucket:'delivered', label:'تم التسليم' },
+    cancel: { bucket:'cancelled', label:'ملغى' }
+  };
+
+  function loadOrders(){
+    return SS.getMyOrders().map(o => {
+      const meta = statusMap[o.status] || { bucket:'ongoing', label:'قيد المعالجة' };
+      return {
+        id: '#SP-' + o.id,
+        date: new Date(o.date).toLocaleString('ar-EG'),
+        status: meta.bucket,
+        statusLabel: meta.label,
+        itemsText: o.items || '',
+        total: Number(o.total) || 0,
+        addr: o.address || ''
+      };
+    }).sort((a,b) => new Date(b.date) - new Date(a.date));
+  }
+  const orders = loadOrders();
 
   const fmt = n => `${n.toLocaleString('ar')}₪`;
   let activeFilter = 'all';
@@ -462,19 +450,18 @@
   function matchesFilter(o){ return activeFilter === 'all' || o.status === activeFilter; }
   function matchesSearch(o){
     if(!searchTerm) return true;
-    const hay = (o.id + ' ' + o.stores.map(s=>s.name).join(' ')).toLowerCase();
+    const hay = (o.id + ' ' + o.itemsText).toLowerCase();
     return hay.includes(searchTerm.toLowerCase());
   }
 
   function actionButtons(o){
     if(o.status === 'ongoing'){
-      return `<a class="btn btn-primary" href="track-order.html">🚚 تتبع الطلب</a>`;
+      return `<a class="btn btn-primary" href="track-order.html?id=${encodeURIComponent(o.id)}">🚚 تتبع الطلب</a>`;
     }
     if(o.status === 'delivered'){
-      return `<button class="btn btn-primary" data-action="reorder">إعادة الطلب</button>
-              <button class="btn btn-ghost" data-action="toggle">التفاصيل</button>`;
+      return `<button class="btn btn-ghost" data-action="toggle">التفاصيل</button>`;
     }
-    return `<button class="btn btn-ghost" data-action="reorder">إعادة الطلب</button>`;
+    return `<button class="btn btn-ghost" data-action="toggle">التفاصيل</button>`;
   }
 
   function render(){
@@ -488,7 +475,7 @@
       emptyState.classList.add('show');
       document.getElementById('emptyDesc').textContent = searchTerm
         ? 'لا توجد نتائج مطابقة لبحثك.'
-        : 'لا توجد طلبات ضمن هذا التصنيف بعد.';
+        : (orders.length ? 'لا توجد طلبات ضمن هذا التصنيف بعد.' : 'لم تقم بأي طلب بعد.');
     } else {
       emptyState.classList.remove('show');
       list.innerHTML = filtered.map(o => `
@@ -498,20 +485,13 @@
             <span class="oc-date">· ${o.date}</span>
             <span class="oc-status ${o.status}">${o.statusLabel}</span>
           </div>
-          <div class="oc-stores">
-            ${o.stores.map(s => `<span class="oc-store-chip">${s.em} ${s.name}</span>`).join('')}
-          </div>
-          <div class="oc-preview">
-            ${o.items.slice(0,4).map(it => `<div class="oc-thumb">${it.em}</div>`).join('')}
-            ${o.items.length > 4 ? `<div class="oc-thumb more">+${o.items.length-4}</div>` : ''}
-          </div>
           <div class="oc-foot">
             <div class="oc-total"><span>الإجمالي</span><b>${fmt(o.total)}</b></div>
             <div class="oc-actions">${actionButtons(o)}</div>
           </div>
           <div class="oc-details" data-details>
-            ${o.items.map(it => `<div class="od-row"><span>${it.em} ${it.name} × ${it.qty}</span><b>${fmt(it.price)}</b></div>`).join('')}
-            <div class="od-addr">📍 <span>${o.addr}</span></div>
+            <div class="od-row"><span>${SS.escapeHTML(o.itemsText)}</span></div>
+            <div class="od-addr">📍 <span>${SS.escapeHTML(o.addr)}</span></div>
           </div>
         </div>
       `).join('');
@@ -540,11 +520,6 @@
       if(action === 'toggle'){
         card.querySelector('[data-details]').classList.toggle('open');
         actionBtn.textContent = card.querySelector('[data-details]').classList.contains('open') ? 'إخفاء' : 'التفاصيل';
-      }
-      if(action === 'reorder'){
-        actionBtn.textContent = '✓ أُضيف للسلة';
-        actionBtn.disabled = true;
-        setTimeout(() => { mGoTo('cart.html'); }, 700);
       }
       return;
     }

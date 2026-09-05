@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="core.css">
+<script src="core.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>تتبع الطلب — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -551,24 +553,9 @@
     <!-- ORDER ITEMS -->
     <div class="section" style="margin-top:18px;">
       <h3>محتويات الطلب</h3>
-      <div class="oi-store">🏪 تك زون</div>
-      <div class="oi-row">
-        <div class="oi-media">🎧</div>
-        <div class="oi-name">سماعة لاسلكية عالية الجودة</div>
-        <div class="oi-qty">× 1</div>
+      <div id="orderItemsBox">
+        <div class="oi-row"><div class="oi-name">جاري تحميل تفاصيل الطلب…</div></div>
       </div>
-      <div class="oi-row">
-        <div class="oi-media">⌚</div>
-        <div class="oi-name">ساعة ذكية بشاشة لمس</div>
-        <div class="oi-qty">× 1</div>
-      </div>
-      <div class="oi-store" style="margin-top:14px;">🏪 ستايل هب</div>
-      <div class="oi-row">
-        <div class="oi-media">👟</div>
-        <div class="oi-name">حذاء رياضي مريح للمشي اليومي</div>
-        <div class="oi-qty">× 2</div>
-      </div>
-      <div class="oi-summary"><span>الإجمالي</span><b>645₪</b></div>
     </div>
   </div>
 </main>
@@ -580,6 +567,29 @@
 </div>
 
 <script>
+  // ===== ربط الصفحة برقم الطلب الحقيقي القادم من "طلباتي" =====
+  const trackParams = new URLSearchParams(window.location.search);
+  const trackedOrderLabel = trackParams.get('id'); // مثال: "#SP-1001"
+  let realOrder = null;
+  if(trackedOrderLabel){
+    document.getElementById('orderIdBadge').textContent = trackedOrderLabel;
+    const numericId = trackedOrderLabel.replace('#SP-', '');
+    realOrder = SS.getAllOrders().find(o => String(o.id) === String(numericId));
+  }
+
+  (function renderOrderItems(){
+    const box = document.getElementById('orderItemsBox');
+    if(!realOrder){
+      box.innerHTML = '<div class="oi-row"><div class="oi-name">تعذّر إيجاد تفاصيل هذا الطلب.</div></div>';
+      return;
+    }
+    const fmt = n => `${(Number(n)||0).toLocaleString('ar')}₪`;
+    box.innerHTML = `
+      <div class="oi-row"><div class="oi-name">${SS.escapeHTML(realOrder.items || '')}</div></div>
+      <div class="oi-summary"><span>الإجمالي</span><b>${fmt(realOrder.total)}</b></div>
+    `;
+  })();
+
   // ===== SIMULATED LIVE PROGRESSION =====
   const steps = [
     {title:'تم استلام الطلب', time:'4:02 م'},
@@ -635,8 +645,18 @@
     }
   }
 
+  const contactInfo = SS.getContact();
+  if(contactInfo && contactInfo.phone){
+    document.getElementById('mainActionBtn').setAttribute('href', 'tel:' + contactInfo.phone);
+  }
+
   document.getElementById('cancelBtn').addEventListener('click', () => {
     if(confirm('هل أنت متأكد من إلغاء الطلب؟')){
+      if(realOrder){
+        const all = SS.getAllOrders();
+        const found = all.find(o => String(o.id) === String(realOrder.id));
+        if(found){ found.status = 'cancel'; SS.saveAllOrders(all); }
+      }
       document.getElementById('statusLine').textContent = 'تم إلغاء الطلب';
       document.getElementById('bottomBar').innerHTML =
         `<a class="btn btn-ghost" href="speed-shop.html" style="flex:1;">العودة للتسوق</a>`;

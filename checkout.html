@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="core.css">
+<script src="core.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>العنوان والدفع — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -482,18 +484,11 @@
       <div class="section">
         <div class="section-head"><span class="em">📍</span><h3>عنوان التوصيل</h3></div>
 
-        <div class="addr-card selected" data-addr="1">
+        <div class="addr-card selected" data-addr="account" id="accountAddrCard">
           <div class="addr-radio"><div class="fill"></div></div>
           <div class="addr-body">
-            <div class="addr-label">المنزل <span class="addr-tag">افتراضي</span></div>
-            <div class="addr-detail">غزة، تل الهوى، شارع الوحدة، عمارة 12 — بجانب صيدلية الشفاء</div>
-          </div>
-        </div>
-        <div class="addr-card" data-addr="2">
-          <div class="addr-radio"><div class="fill"></div></div>
-          <div class="addr-body">
-            <div class="addr-label">العمل</div>
-            <div class="addr-detail">غزة، الرمال، شارع عمر المختار، مجمع النور</div>
+            <div class="addr-label">عنوانك المسجّل <span class="addr-tag">افتراضي</span></div>
+            <div class="addr-detail" id="accountAddrDetail">—</div>
           </div>
         </div>
 
@@ -590,18 +585,13 @@
     <!-- SUMMARY -->
     <div class="section" style="margin-top:18px;">
       <h3 style="font-size:0.92rem; font-weight:800; margin-bottom:12px;">ملخص الطلب</h3>
-      <div class="sum-row"><span>المجموع الفرعي</span><b id="sumSubtotal">700₪</b></div>
-      <div class="sum-row"><span>رسوم التوصيل</span><b id="sumDelivery">15₪</b></div>
-      <div class="sum-row discount"><span>الخصم</span><b id="sumDiscount">-70₪</b></div>
+      <div class="sum-row"><span>المجموع الفرعي</span><b id="sumSubtotal">0₪</b></div>
+      <div class="sum-row"><span>رسوم التوصيل</span><b id="sumDelivery">0₪</b></div>
+      <div class="sum-row discount" id="sumDiscountRow" style="display:none;"><span>الخصم</span><b id="sumDiscount">0₪</b></div>
       <div class="sum-divider"></div>
-      <div class="sum-total"><span>الإجمالي</span><b id="sumTotal">645₪</b></div>
-      <a class="sum-items-toggle" id="sumItemsToggle">عرض المنتجات (4)</a>
-      <div class="sum-items" id="sumItems">
-        <div class="sum-item-row"><span>سماعة لاسلكية عالية الجودة × 1</span><span>145₪</span></div>
-        <div class="sum-item-row"><span>ساعة ذكية بشاشة لمس × 1</span><span>340₪</span></div>
-        <div class="sum-item-row"><span>حذاء رياضي مريح للمشي اليومي × 2</span><span>440₪</span></div>
-        <div class="sum-item-row"><span>حقيبة ظهر مقاومة للماء × 1</span><span>95₪</span></div>
-      </div>
+      <div class="sum-total"><span>الإجمالي</span><b id="sumTotal">0₪</b></div>
+      <a class="sum-items-toggle" id="sumItemsToggle">عرض المنتجات (0)</a>
+      <div class="sum-items" id="sumItems"></div>
     </div>
   </div>
 </main>
@@ -625,6 +615,44 @@
 </div>
 
 <script>
+  // ===== تحميل بيانات حقيقية: يتطلب حسابًا مسجّلًا وسلة غير فارغة =====
+  const currentUser = SS.getUser();
+  if(!currentUser){
+    window.location.href = 'account.html';
+  }
+  const cartLines = SS.getCart().map(c => {
+    const p = SS.getProductById(c.id);
+    if(!p) return null;
+    return { id: p.id, name: p.name, price: Number(p.price) || 0, qty: c.qty };
+  }).filter(Boolean);
+  if(!cartLines.length){
+    window.location.href = 'cart.html';
+  }
+
+  document.getElementById('accountAddrDetail').textContent =
+    `${currentUser.city || 'غزة'} — ${currentUser.address || ''}`;
+
+  const DELIVERY_FEE = 15;
+  const savedSummary = SS.LS.get('speedShopCartSummary', null);
+  const subtotal = cartLines.reduce((s,i) => s + i.price * i.qty, 0);
+  const delivery = cartLines.length ? DELIVERY_FEE : 0;
+  const discount = (savedSummary && savedSummary.subtotal === subtotal) ? (savedSummary.discount || 0) : 0;
+  const total = subtotal + delivery - discount;
+  const fmt = n => `${n.toLocaleString('ar')}₪`;
+
+  document.getElementById('sumSubtotal').textContent = fmt(subtotal);
+  document.getElementById('sumDelivery').textContent = fmt(delivery);
+  if(discount > 0){
+    document.getElementById('sumDiscountRow').style.display = 'flex';
+    document.getElementById('sumDiscount').textContent = '-' + fmt(discount);
+  }
+  document.getElementById('sumTotal').textContent = fmt(total);
+  document.getElementById('barTotal').textContent = fmt(total);
+  document.getElementById('sumItemsToggle').textContent = `عرض المنتجات (${cartLines.length})`;
+  document.getElementById('sumItems').innerHTML = cartLines.map(it =>
+    `<div class="sum-item-row"><span>${SS.escapeHTML(it.name)} × ${it.qty}</span><span>${fmt(it.price * it.qty)}</span></div>`
+  ).join('');
+
   // ===== ADDRESS SELECTION =====
   document.querySelectorAll('.addr-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -692,7 +720,7 @@
   document.getElementById('sumItemsToggle').addEventListener('click', function(){
     document.getElementById('sumItems').classList.toggle('open');
     this.textContent = document.getElementById('sumItems').classList.contains('open')
-      ? 'إخفاء المنتجات' : 'عرض المنتجات (4)';
+      ? 'إخفاء المنتجات' : `عرض المنتجات (${cartLines.length})`;
   });
 
   // ===== STEP INDICATOR: shift to "payment" step once a payment method other than default is engaged with,
@@ -713,7 +741,23 @@
       if(addrForm.classList.contains('open')) return; // invalid, stop
     }
     markPaymentStep();
-    document.getElementById('orderId').textContent = '#SP-' + Math.floor(1000 + Math.random()*9000);
+
+    const selectedAddrCard = document.querySelector('.addr-card.selected');
+    const addressText = selectedAddrCard ? selectedAddrCard.querySelector('.addr-detail').textContent : `${currentUser.city} — ${currentUser.address}`;
+    const payMethod = document.querySelector('.pay-option.selected').dataset.pay;
+    const noteEl = document.querySelector('.note-box textarea');
+
+    const order = SS.createOrder({
+      customer: currentUser.name,
+      phone: currentUser.phone,
+      address: addressText,
+      payment: payMethod,
+      note: noteEl ? noteEl.value.trim() : '',
+      items: cartLines.map(i => `${i.name} × ${i.qty}`).join('، '),
+      total: total
+    });
+
+    document.getElementById('orderId').textContent = '#SP-' + order.id;
     document.getElementById('successOverlay').classList.add('open');
   });
 </script>

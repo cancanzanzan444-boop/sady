@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="core.css">
+<script src="core.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>سلتي — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -498,20 +500,26 @@
 </div>
 
 <script>
-  // ===== STATE (in-memory only) =====
-  let cart = [
-    {id:1, store:'تك زون', em:'🎧', name:'سماعة لاسلكية عالية الجودة', variant:'أسود', price:145, old:190, qty:1},
-    {id:2, store:'تك زون', em:'⌚', name:'ساعة ذكية بشاشة لمس', variant:'رمادي فضائي', price:340, old:420, qty:1},
-    {id:3, store:'ستايل هب', em:'👟', name:'حذاء رياضي مريح للمشي اليومي', variant:'مقاس 42', price:220, old:280, qty:2},
-    {id:4, store:'ترافل جو', em:'🎒', name:'حقيبة ظهر مقاومة للماء', variant:'أزرق داكن', price:95, old:null, qty:1}
-  ];
-  let saved = [
-    {id:5, store:'بيوتي لاين', em:'🧴', name:'مجموعة عناية بالبشرة طبيعية', price:130}
-  ];
+  // ===== STATE: مبني على بيانات حقيقية (السلة والمنتجات المحفوظة من متجر المسؤول) =====
   const DELIVERY_FEE = 15;
   let promo = null; // {code, percent}
 
   const fmt = n => `${n.toLocaleString('ar')}₪`;
+
+  function cartItems(){
+    return SS.getCart().map(c => {
+      const p = SS.getProductById(c.id);
+      if(!p) return null;
+      return { id: p.id, store: p.category || 'SPEED SHOP', em: p.icon || '🛍️', name: p.name, price: Number(p.price) || 0, qty: c.qty };
+    }).filter(Boolean);
+  }
+  function savedItems(){
+    return SS.getSaved().map(id => {
+      const p = SS.getProductById(id);
+      if(!p) return null;
+      return { id: p.id, store: p.category || 'SPEED SHOP', em: p.icon || '🛍️', name: p.name, price: Number(p.price) || 0 };
+    }).filter(Boolean);
+  }
 
   function groupByStore(items){
     const groups = {};
@@ -520,6 +528,8 @@
   }
 
   function render(){
+    const cart = cartItems();
+    const saved = savedItems();
     const content = document.getElementById('cartContent');
     const emptyState = document.getElementById('emptyState');
     const summaryBox = document.getElementById('summaryBox');
@@ -557,9 +567,8 @@
               <div class="ci-media">${it.em}</div>
               <div class="ci-body">
                 <div class="ci-name">${it.name}</div>
-                <div class="ci-variant">${it.variant}</div>
                 <div class="ci-row">
-                  <div><span class="ci-price">${fmt(it.price)}</span>${it.old ? `<span class="ci-old">${fmt(it.old)}</span>` : ''}</div>
+                  <div><span class="ci-price">${fmt(it.price)}</span></div>
                   <div class="stepper">
                     <button data-action="dec" data-id="${it.id}" aria-label="إنقاص">−</button>
                     <span class="qty">${it.qty}</span>
@@ -595,10 +604,11 @@
       </div>
     `).join('');
 
-    calcSummary();
+    calcSummary(cart);
   }
 
-  function calcSummary(){
+  function calcSummary(cart){
+    cart = cart || cartItems();
     const subtotal = cart.reduce((s,i) => s + i.price * i.qty, 0);
     const delivery = cart.length ? DELIVERY_FEE : 0;
     let discount = 0;
@@ -616,39 +626,36 @@
     }
     document.getElementById('sumTotal').textContent = fmt(total);
     document.getElementById('barTotal').textContent = fmt(total);
+    // نحفظ الملخص الحالي كي تستخدمه صفحة الدفع
+    SS.LS.set('speedShopCartSummary', { subtotal, delivery, discount, total, promo });
   }
 
   // ===== EVENT DELEGATION =====
   document.getElementById('cartContent').addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-action]');
     if(!btn) return;
-    const id = Number(btn.dataset.id);
+    const id = btn.dataset.id;
     const action = btn.dataset.action;
-    const item = cart.find(i => i.id === id);
+    const cart = SS.getCart();
+    const item = cart.find(i => String(i.id) === String(id));
 
-    if(action === 'inc' && item){ item.qty++; render(); }
+    if(action === 'inc' && item){ SS.addToCart(id, 1); render(); }
     if(action === 'dec' && item){
-      item.qty--;
-      if(item.qty <= 0){ cart = cart.filter(i => i.id !== id); }
+      if(item.qty <= 1){ SS.removeFromCart(id); } else { item.qty--; SS.setCart(cart); }
       render();
     }
-    if(action === 'remove' && item){
+    if(action === 'remove'){
       const el = btn.closest('.cart-item');
       el.classList.add('removing');
-      setTimeout(() => { cart = cart.filter(i => i.id !== id); render(); }, 200);
+      setTimeout(() => { SS.removeFromCart(id); render(); }, 200);
     }
-    if(action === 'save' && item){
-      saved.push({id:item.id, store:item.store, em:item.em, name:item.name, price:item.price});
-      cart = cart.filter(i => i.id !== id);
+    if(action === 'save'){
+      SS.moveCartItemToSaved(id);
       render();
     }
     if(action === 'restore'){
-      const sItem = saved.find(i => i.id === id);
-      if(sItem){
-        cart.push({...sItem, variant:'قياسي', old:null, qty:1});
-        saved = saved.filter(i => i.id !== id);
-        render();
-      }
+      SS.restoreSavedItem(id);
+      render();
     }
   });
 
@@ -658,8 +665,8 @@
   });
 
   document.getElementById('clearCartBtn').addEventListener('click', () => {
-    if(cart.length === 0) return;
-    cart = [];
+    if(SS.getCart().length === 0) return;
+    SS.setCart([]);
     render();
   });
 
@@ -680,7 +687,7 @@
   });
 
   document.getElementById('checkoutBtn').addEventListener('click', () => {
-    if(cart.length === 0) return;
+    if(SS.getCart().length === 0) return;
     mGoTo('checkout.html');
   });
 

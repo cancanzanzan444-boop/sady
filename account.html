@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="core.css">
+<script src="core.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>حسابي — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -345,24 +347,67 @@
 
 <main>
   <div class="wrap">
+
+    <!-- REGISTRATION / AUTO-LOGIN GATE -->
+    <!-- تظهر هذه الخانة فقط أول مرة يدخل بها الزائر من هذا المتصفح. بعد التسجيل تُحفظ بياناته
+         تلقائيًا، وفي كل زيارة لاحقة من نفس المتصفح سيتم التعرف عليه دون الحاجة لإعادة التسجيل. -->
+    <div id="authGate" style="display:none;">
+      <div class="section" style="margin-top:8px;">
+        <div class="menu-card" style="padding:20px 16px;">
+          <h2 style="font-size:1.05rem; font-weight:800; margin-bottom:4px;">
+            👋 أهلًا بك في SPEED SHOP
+          </h2>
+          <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:18px;">
+            سجّل بياناتك مرة واحدة فقط، وسنتعرف عليك تلقائيًا في كل زيارة قادمة من نفس هذا المتصفح.
+          </p>
+          <form id="registerForm">
+            <div class="form-group" style="margin-bottom:12px;">
+              <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:6px;">الاسم الكامل</label>
+              <input type="text" id="regName" required placeholder="مثال: محمد أبو سعيد"
+                style="width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--line); background:var(--bg-2, transparent); color:inherit; font-size:0.9rem;">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:6px;">رقم الجوال</label>
+              <input type="tel" id="regPhone" required placeholder="059XXXXXXX" inputmode="numeric" pattern="[0-9]{9,10}"
+                style="width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--line); background:var(--bg-2, transparent); color:inherit; font-size:0.9rem;">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:6px;">المدينة</label>
+              <input type="text" id="regCity" value="غزة" required
+                style="width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--line); background:var(--bg-2, transparent); color:inherit; font-size:0.9rem;">
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+              <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:6px;">العنوان بالكامل (الحي، الشارع، أقرب معلم)</label>
+              <textarea id="regAddress" required rows="3" placeholder="مثال: حي الرمال، شارع الوحدة، بجانب..."
+                style="width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--line); background:var(--bg-2, transparent); color:inherit; font-size:0.9rem; resize:vertical;"></textarea>
+            </div>
+            <p id="regError" style="display:none; color:#ff5d5d; font-size:0.8rem; margin-bottom:10px;"></p>
+            <button type="submit" class="btn btn-primary" style="width:100%;">تسجيل</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE (يظهر فقط بعد التسجيل / التعرّف التلقائي) -->
+    <div id="profileWrap" style="display:none;">
     <!-- PROFILE HEAD -->
     <div class="profile-head">
-      <div class="avatar">م</div>
+      <div class="avatar" id="avatarInitial">؟</div>
       <div class="profile-info">
-        <div class="profile-name">محمد أبو سعيد</div>
-        <div class="profile-phone">059 123 4567</div>
-        <span class="profile-tier">⭐ عضو ذهبي</span>
+        <div class="profile-name" id="profileName">—</div>
+        <div class="profile-phone" id="profilePhone">—</div>
+        <span class="profile-tier" id="profileAddress">—</span>
       </div>
-      <button class="edit-btn" aria-label="تعديل الملف الشخصي">
+      <button class="edit-btn" id="editProfileBtn" aria-label="تعديل الملف الشخصي">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
       </button>
     </div>
 
     <!-- STATS -->
     <div class="stats-row">
-      <div class="stat-card"><b>28</b><span>طلب</span></div>
-      <div class="stat-card"><b>5</b><span>مفضلة</span></div>
-      <div class="stat-card"><b>2</b><span>عناوين</span></div>
+      <div class="stat-card"><b id="statOrders">0</b><span>طلب</span></div>
+      <div class="stat-card"><b id="statWishlist">0</b><span>مفضلة</span></div>
+      <div class="stat-card"><b id="statAddresses">1</b><span>عناوين</span></div>
     </div>
 
     <!-- MY ACTIVITY -->
@@ -371,7 +416,7 @@
       <div class="menu-card">
         <a class="menu-row" href="my-orders.html">
           <span class="em">📦</span><span class="label">طلباتي</span>
-          <span class="badge">1 جارٍ</span>
+          <span class="badge" id="ordersBadge" style="display:none;"></span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </a>
         <a class="menu-row" href="wishlist.html">
@@ -389,8 +434,8 @@
     <div class="section">
       <div class="section-label">إعدادات الحساب</div>
       <div class="menu-card">
-        <div class="menu-row">
-          <span class="em">📍</span><span class="label">العناوين المحفوظة</span>
+        <div class="menu-row" id="addressRow">
+          <span class="em">📍</span><span class="label">العنوان المحفوظ</span>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6" transform="rotate(180 12 12)"/></svg>
         </div>
         <div class="menu-row">
@@ -448,10 +493,84 @@
     </div>
 
     <div class="app-version">SPEED SHOP · الإصدار 1.0.0</div>
+    </div>
   </div>
 </main>
 
 <script>
+  // ===== حالة الحساب: تسجيل مرة واحدة، ثم التعرف التلقائي من نفس المتصفح =====
+  function renderAccount(){
+    const user = SS.getUser();
+    const gate = document.getElementById('authGate');
+    const profile = document.getElementById('profileWrap');
+
+    if(!user){
+      gate.style.display = 'block';
+      profile.style.display = 'none';
+      return;
+    }
+
+    gate.style.display = 'none';
+    profile.style.display = 'block';
+
+    document.getElementById('avatarInitial').textContent = (user.name || '؟').trim().charAt(0) || '؟';
+    document.getElementById('profileName').textContent = user.name || '—';
+    document.getElementById('profilePhone').textContent = user.phone || '—';
+    document.getElementById('profileAddress').textContent = '📍 ' + (user.city || 'غزة');
+
+    const myOrders = SS.getMyOrders();
+    document.getElementById('statOrders').textContent = myOrders.length;
+    document.getElementById('statWishlist').textContent = SS.getWishlist().length;
+    document.getElementById('statAddresses').textContent = user.address ? 1 : 0;
+
+    const inProgress = myOrders.filter(o => o.status === 'new' || o.status === 'prep').length;
+    const ordersBadge = document.getElementById('ordersBadge');
+    if(inProgress > 0){
+      ordersBadge.textContent = inProgress + ' جارٍ';
+      ordersBadge.style.display = 'inline-flex';
+    } else {
+      ordersBadge.style.display = 'none';
+    }
+
+    document.getElementById('addressRow').querySelector('.label').textContent =
+      user.address ? `${user.city} — ${user.address}` : 'العنوان المحفوظ';
+  }
+
+  function fillFormFromUser(){
+    const user = SS.getUser();
+    if(!user) return;
+    document.getElementById('regName').value = user.name || '';
+    document.getElementById('regPhone').value = user.phone || '';
+    document.getElementById('regCity').value = user.city || 'غزة';
+    document.getElementById('regAddress').value = user.address || '';
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('regName').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const city = document.getElementById('regCity').value.trim();
+    const address = document.getElementById('regAddress').value.trim();
+    const err = document.getElementById('regError');
+
+    if(!/^[0-9]{9,10}$/.test(phone)){
+      err.textContent = 'يرجى إدخال رقم جوال صحيح (أرقام فقط).';
+      err.style.display = 'block';
+      return;
+    }
+    err.style.display = 'none';
+
+    SS.registerUser({ name, phone, city, address });
+    renderAccount();
+  });
+
+  document.getElementById('editProfileBtn').addEventListener('click', () => {
+    fillFormFromUser();
+    document.getElementById('authGate').style.display = 'block';
+    document.getElementById('profileWrap').style.display = 'none';
+    document.getElementById('authGate').scrollIntoView({behavior:'smooth'});
+  });
+
   document.getElementById('notifSwitch').addEventListener('click', function(){
     this.classList.toggle('on');
   });
@@ -465,10 +584,13 @@
     });
   });
   document.getElementById('logoutBtn').addEventListener('click', () => {
-    if(confirm('هل تريد تسجيل الخروج من حسابك؟')){
-      mGoTo('speed-shop.html');
+    if(confirm('هل تريد تسجيل الخروج من حسابك؟ سيُطلب منك التسجيل مجددًا في هذا المتصفح.')){
+      SS.logoutUser();
+      renderAccount();
     }
   });
+
+  renderAccount();
 </script>
 <script>
   (function(){
