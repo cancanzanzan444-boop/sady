@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
-<link rel="stylesheet" href="core.css">
-<script src="core.js"></script>
+<link rel="stylesheet" href="core.css?v=2">
+<script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>سلتي — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -97,8 +97,9 @@
   .ci-media{
     width:72px; height:72px; border-radius:12px; flex-shrink:0;
     background:linear-gradient(135deg, var(--surface-2), #10142A);
-    display:flex; align-items:center; justify-content:center; font-size:1.8rem;
+    display:flex; align-items:center; justify-content:center; font-size:1.8rem; overflow:hidden;
   }
+  .ci-media img{width:100%; height:100%; object-fit:cover;}
   .ci-body{flex:1; min-width:0; display:flex; flex-direction:column;}
   .ci-name{font-size:0.86rem; font-weight:700; margin-bottom:2px;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
@@ -510,14 +511,14 @@
     return SS.getCart().map(c => {
       const p = SS.getProductById(c.id);
       if(!p) return null;
-      return { id: p.id, store: p.category || 'SPEED SHOP', em: p.icon || '🛍️', name: p.name, price: Number(p.price) || 0, qty: c.qty };
+      return { id: p.id, store: p.category || 'SPEED SHOP', em: p.icon || '🛍️', image: p.image || null, name: p.name, price: Number(p.price) || 0, qty: c.qty };
     }).filter(Boolean);
   }
   function savedItems(){
     return SS.getSaved().map(id => {
       const p = SS.getProductById(id);
       if(!p) return null;
-      return { id: p.id, store: p.category || 'SPEED SHOP', em: p.icon || '🛍️', name: p.name, price: Number(p.price) || 0 };
+      return { id: p.id, store: p.category || 'SPEED SHOP', em: p.icon || '🛍️', image: p.image || null, name: p.name, price: Number(p.price) || 0 };
     }).filter(Boolean);
   }
 
@@ -564,7 +565,7 @@
           <div class="store-head"><span class="em">🏪</span><h3>${store}</h3><span>${items.length} منتج</span></div>
           ${items.map(it => `
             <div class="cart-item" data-id="${it.id}">
-              <div class="ci-media">${it.em}</div>
+              <div class="ci-media">${it.image ? `<img src="${it.image}" alt="">` : it.em}</div>
               <div class="ci-body">
                 <div class="ci-name">${it.name}</div>
                 <div class="ci-row">
@@ -595,7 +596,7 @@
     savedToggle.style.display = saved.length ? 'flex' : 'none';
     savedList.innerHTML = saved.map(it => `
       <div class="saved-item" data-id="${it.id}">
-        <div class="ci-media">${it.em}</div>
+        <div class="ci-media">${it.image ? `<img src="${it.image}" alt="">` : it.em}</div>
         <div class="ci-body">
           <div class="ci-name">${it.name}</div>
           <div class="ci-price">${fmt(it.price)}</div>

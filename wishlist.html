@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
-<link rel="stylesheet" href="core.css">
-<script src="core.js"></script>
+<link rel="stylesheet" href="core.css?v=2">
+<script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>المفضلة — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,8 +59,9 @@
   .fav-media{
     height:110px; border-radius:11px; margin-bottom:9px;
     background:linear-gradient(135deg, var(--surface-2), #10142A);
-    display:flex; align-items:center; justify-content:center; font-size:2.6rem; position:relative;
+    display:flex; align-items:center; justify-content:center; font-size:2.6rem; position:relative; overflow:hidden;
   }
+  .fav-media img{width:100%; height:100%; object-fit:cover;}
   .fav-remove{
     position:absolute; top:8px; left:8px; width:28px; height:28px; border-radius:9px;
     background:rgba(10,13,26,0.75); backdrop-filter:blur(4px); color:var(--coral);
@@ -366,7 +367,7 @@
     return SS.getWishlist().map(id => {
       const p = SS.getProductById(id);
       if(!p) return null;
-      return { id: p.id, store: p.category || 'SPEED SHOP', em: p.icon || '🛍️', name: p.name, price: Number(p.price) || 0, inStock: true };
+      return { id: p.id, store: p.category || 'SPEED SHOP', em: p.icon || '🛍️', image: p.image || null, name: p.name, price: Number(p.price) || 0, inStock: true };
     }).filter(Boolean);
   }
 
@@ -390,7 +391,7 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/></svg>
         </button>
         <a href="product-detail.html?id=${encodeURIComponent(f.id)}">
-          <div class="fav-media">${f.em}</div>
+          <div class="fav-media">${f.image ? `<img src="${f.image}" alt="">` : f.em}</div>
         </a>
         <div class="fav-store">🏪 ${SS.escapeHTML(f.store)}</div>
         <div class="fav-name">${SS.escapeHTML(f.name)}</div>

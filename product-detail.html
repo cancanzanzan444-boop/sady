@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
-<link rel="stylesheet" href="core.css">
-<script src="core.js"></script>
+<link rel="stylesheet" href="core.css?v=2">
+<script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>تفاصيل المنتج — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,6 +81,7 @@
     flex:0 0 100%; scroll-snap-align:start; display:flex; align-items:center; justify-content:center;
     font-size:6rem;
   }
+  .gallery-slide img.p-photo-full{width:100%; height:100%; object-fit:cover; display:block;}
   .gallery-dots{position:absolute; bottom:14px; left:0; right:0; display:flex; justify-content:center; gap:6px;}
   .gdot{width:6px; height:6px; border-radius:50%; background:var(--line); transition:all .2s ease;}
   .gdot.active{width:18px; border-radius:4px; background:var(--accent-2);}
@@ -171,7 +172,8 @@
   .related-scroll{display:flex; gap:12px; overflow-x:auto; padding:2px 16px 6px; scrollbar-width:none;}
   .related-scroll::-webkit-scrollbar{display:none;}
   .rp-card{flex:0 0 140px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); padding:10px;}
-  .rp-media{height:90px; border-radius:10px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:2rem; margin-bottom:8px;}
+  .rp-media{height:90px; border-radius:10px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:2rem; margin-bottom:8px; overflow:hidden;}
+  .rp-media img{width:100%; height:100%; object-fit:cover;}
   .rp-name{font-size:0.74rem; font-weight:700; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.4em; margin-bottom:4px;}
   .rp-price{font-size:0.8rem; font-weight:800; color:var(--accent-2);}
 
@@ -519,7 +521,9 @@
 
   let qty = 1;
 
-  document.getElementById('mainIconSlide').textContent = product.icon || '🛍️';
+  document.getElementById('mainIconSlide').innerHTML = product.image
+    ? `<img src="${product.image}" alt="${SS.escapeHTML(product.name)}" class="p-photo-full">`
+    : SS.escapeHTML(product.icon || '🛍️');
   document.getElementById('categoryText').textContent = product.category || 'SPEED SHOP';
   document.getElementById('productTitle').textContent = product.name;
   document.title = product.name + ' — SPEED SHOP';
@@ -601,7 +605,7 @@
     }
     wrap.innerHTML = list.map(p => `
       <a class="rp-card" href="product-detail.html?id=${encodeURIComponent(p.id)}">
-        <div class="rp-media">${p.icon || '🛍️'}</div>
+        <div class="rp-media">${p.image ? `<img src="${p.image}" alt="">` : (p.icon || '🛍️')}</div>
         <div class="rp-name">${SS.escapeHTML(p.name)}</div>
         <div class="rp-price">${Number(p.price) || 0}₪</div>
       </a>

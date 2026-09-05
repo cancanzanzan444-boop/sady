@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("speedShopTheme")||"dark";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
-<link rel="stylesheet" href="core.css">
-<script src="core.js"></script>
+<link rel="stylesheet" href="core.css?v=2">
+<script src="core.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>لوحة تحكم المسؤول — SPEED SHOP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -614,12 +614,18 @@
   pImageInput.addEventListener('change', async () => {
     const file = pImageInput.files[0];
     if(!file) return;
+    if(typeof SS === 'undefined' || !SS.fileToCompressedDataURL){
+      toast('⚠️ النسخة المحمّلة من الموقع قديمة — يرجى تحديث الصفحة (Ctrl+F5) والمحاولة مجددًا');
+      pImageInput.value = '';
+      return;
+    }
     try{
       pendingImage = await SS.fileToCompressedDataURL(file, {maxSize: 800, quality: 0.75});
       pImagePreview.src = pendingImage;
       pImagePreviewRow.style.display = 'flex';
     }catch(err){
-      toast('تعذّر تحميل الصورة، جرّب صورة أخرى');
+      console.error('product image error:', err);
+      toast('⚠️ ' + (err && err.message ? err.message : 'تعذّر تحميل الصورة، جرّب صورة أخرى'));
       pImageInput.value = '';
     }
   });
@@ -686,12 +692,18 @@
   ePImageInput.addEventListener('change', async () => {
     const file = ePImageInput.files[0];
     if(!file) return;
+    if(typeof SS === 'undefined' || !SS.fileToCompressedDataURL){
+      toast('⚠️ النسخة المحمّلة من الموقع قديمة — يرجى تحديث الصفحة (Ctrl+F5) والمحاولة مجددًا');
+      ePImageInput.value = '';
+      return;
+    }
     try{
       editPendingImage = await SS.fileToCompressedDataURL(file, {maxSize: 800, quality: 0.75});
       ePImagePreview.src = editPendingImage;
       ePImagePreviewRow.style.display = 'flex';
     }catch(err){
-      toast('تعذّر تحميل الصورة، جرّب صورة أخرى');
+      console.error('product image error:', err);
+      toast('⚠️ ' + (err && err.message ? err.message : 'تعذّر تحميل الصورة، جرّب صورة أخرى'));
       ePImageInput.value = '';
     }
   });
